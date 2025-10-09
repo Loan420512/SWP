@@ -6,12 +6,23 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
+
+
     @Value("${jwt.secret}") private String secret;
     @Value("${jwt.expirationMs}") private long expiration;
+
+    private SecretKey key;
+
+    @jakarta.annotation.PostConstruct
+    public void init() {
+        this.key = io.jsonwebtoken.security.Keys.hmacShaKeyFor(
+                secret.getBytes(java.nio.charset.StandardCharsets.UTF_8));
+    }
 
     public String generate(String username, Role role) {
         Date now=new Date(); Date exp=new Date(now.getTime()+expiration);
