@@ -1,0 +1,44 @@
+package com.evswap.controller;
+
+import com.evswap.entity.Station;
+import com.evswap.service.StationService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("/api/stations")
+@RequiredArgsConstructor
+public class StationController {
+    private final StationService stationService;
+
+    @GetMapping
+    public ResponseEntity<List<Station>> getAll() {
+        return ResponseEntity.ok(stationService.getAll());
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Station> getById(@PathVariable Integer id) {
+        return stationService.getById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    @PostMapping
+    public ResponseEntity<Station> create(@RequestBody Station station) {
+        return ResponseEntity.ok(stationService.create(station));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Station> update(@PathVariable Integer id, @RequestBody Station station) {
+        return ResponseEntity.ok(stationService.update(id, station));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id) {
+        stationService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+}
