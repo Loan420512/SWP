@@ -8,9 +8,9 @@ export function HeroSection() {
       <div className="container mx-auto px-4 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           <div className="space-y-8">
-            <div className="inline-flex items-center gap-2 text-sm text-primary">
-              <Zap className="w-4 h-4 text-[#A2F200]" />
-              <span className="font-medium">The Future of EV Energy</span>
+            <div className="inline-flex items-center gap-2.5 text-base md:text-lg">
+              <Zap className="w-5 h-5 text-[#A2F200]" />
+              <span className="font-semibold text-primary">The Future of EV Energy</span>
             </div>
 
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight text-balance">
@@ -33,11 +33,16 @@ export function HeroSection() {
 
             <div className="grid grid-cols-2 gap-8 pt-4">
               <div>
-                <div className="text-3xl font-bold text-foreground">3 min</div>
+                <div className="flex items-center gap-2 text-3xl font-bold text-foreground">
+                  <span className="w-2 h-2 rounded-full bg-[#A2F200]"></span>3 min
+                </div>
                 <div className="text-sm text-muted-foreground mt-1">Average swap time</div>
               </div>
               <div>
-                <div className="text-3xl font-bold text-foreground">24/7</div>
+                <div className="flex items-center gap-2 text-3xl font-bold text-foreground">
+                  <span className="w-2 h-2 rounded-full bg-[#A2F200]"></span>
+                  24/7
+                </div>
                 <div className="text-sm text-muted-foreground mt-1">Always available</div>
               </div>
             </div>
