@@ -19,38 +19,40 @@ export default function SignInPage() {
     console.log("Google sign-in clicked")
   }
 
+  const isFormValid = email.trim() !== "" && password.trim() !== ""
+
   const handleEmailSignIn = async (e: React.FormEvent) => {
-  e.preventDefault()
-  try {
-    const response = await fetch("http://localhost:8080/api/users/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        userName: email,
-        password: password,
-      }),
-    })
+    e.preventDefault()
+    try {
+      const response = await fetch("http://localhost:8080/api/users/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userName: email,
+          password: password,
+        }),
+      })
 
-    if (!response.ok) {
-      throw new Error("Invalid username or password")
+      if (!response.ok) {
+        throw new Error("Invalid username or password")
+      }
+
+      const data = await response.json()
+      console.log("Login success:", data)
+
+      localStorage.setItem("user", JSON.stringify(data))
+      window.location.href = "/dashboard"
+    } catch (error: any) {
+      alert(error.message || "Something went wrong")
     }
-
-    const data = await response.json()
-    console.log("Login success:", data)
-
-    localStorage.setItem("user", JSON.stringify(data))
-    window.location.href = "/dashboard"
-  } catch (error: any) {
-    alert(error.message || "Something went wrong")
   }
-}
 
   return (
     <div className="min-h-screen bg-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-         {/* Logo and Title */}
+        {/* Logo and Title */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#A2F200]">
             <Zap className="w-10 h-10 text-black" />
@@ -147,7 +149,14 @@ export default function SignInPage() {
               </Link>
             </div>
 
-            <Button type="submit" className="w-full h-12 text-base bg-purple-600 hover:bg-purple-700 text-white">
+            <Button
+              type="submit"
+              disabled={!isFormValid}
+              className={`w-full h-12 text-base text-white ${isFormValid
+                  ? "bg-purple-600 hover:bg-purple-700"
+                  : "bg-gray-400 cursor-not-allowed"
+                }`}
+            >
               Sign In
             </Button>
           </form>
