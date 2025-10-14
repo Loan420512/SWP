@@ -3,17 +3,11 @@ package com.evswap.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.List;
-
 @Entity
 @Table(name = "Station")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class Station {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "StationID")
@@ -24,6 +18,8 @@ public class Station {
     private String stationStatus;
     private String contact;
 
-    @OneToMany(mappedBy = "station", cascade = CascadeType.ALL)
-    private List<Inventory> inventories;
+    // ✅ Constructor nhận ID
+    public Station(Integer id) {
+        this.id = id;
+    }
 }

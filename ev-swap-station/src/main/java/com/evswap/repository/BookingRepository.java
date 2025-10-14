@@ -1,29 +1,22 @@
 package com.evswap.repository;
 
-//import com.evswap.entity.Booking;
-//import org.springframework.data.jpa.repository.JpaRepository;
-//import java.util.List;
-//
-//public interface BookingRepository extends JpaRepository<Booking, Integer> {
-//    List<Booking> findByUserUserID(Integer userId);
-//    List<Booking> findByStationStationID(Integer stationId);
-//    List<Booking> findByVehicleVehicleID(Integer vehicleId);
-//}
-
-
 import com.evswap.entity.Booking;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
-public interface BookingRepository extends JpaRepository<Booking, Integer> {
+public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    // ĐÚNG: truy cập thuộc tính lồng: user.id
-    List<Booking> findByUser_Id(Integer userId);
+    @Query(value = """
+        SELECT COUNT(*) FROM Booking b
+        WHERE b.UserID = :userId
+          AND b.Status IN ('BOOKED','ARRIVED')
+          AND ABS(DATEDIFF(MINUTE, b.TimeDate, :timeSlot)) <= :windowMin
+        """, nativeQuery = true)
+    long countOpenAround(Integer userId, LocalDateTime timeSlot, int windowMin);
 
-    // Nếu bạn cần check tồn tại:
-    boolean existsByUser_IdAndStatus(Integer userId, String status);
-
-    // (tuỳ chọn) theo username:
-    List<Booking> findByUser_Username(String username);
+    Page<Booking> findByUser_Id(Integer userId, Pageable pageable);
 }
