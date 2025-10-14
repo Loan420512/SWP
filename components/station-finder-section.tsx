@@ -57,8 +57,11 @@ export function StationFinderSection() {
         </div>
       </div>
 
-      <div className="bg-[#7241CE]/10 py-16 md:py-24 mb-12">
-        <div className="max-w-7xl mx-auto px-4">
+      <div className="bg-[#7241CE]/10 py-16 md:py-24 mb-12 relative overflow-hidden">
+        <div className="absolute inset-0 opacity-20">
+          <img src="/abstract-map-with-location-pins-and-roads.jpg" alt="" className="w-full h-full object-cover blur-sm" />
+        </div>
+        <div className="max-w-7xl mx-auto px-4 relative z-10">
           <div className="flex flex-col items-center justify-center min-h-[450px]">
             <div className="w-20 h-20 bg-[#A2F200] rounded-full flex items-center justify-center mb-6">
               <MapPin className="w-10 h-10 text-black" />

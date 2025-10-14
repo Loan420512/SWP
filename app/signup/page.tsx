@@ -34,6 +34,17 @@ export default function SignupPage() {
     }));
   };
 
+  const isFormValid =
+    formData.userName.trim() &&
+    formData.fullName.trim() &&
+    formData.phone.trim() &&
+    formData.email.trim() &&
+    formData.address.trim() &&
+    formData.password.trim() &&
+    formData.confirmPassword.trim() &&
+    formData.password === formData.confirmPassword &&
+    agreed;
+
 
   const handleEmailSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -286,7 +297,13 @@ export default function SignupPage() {
               </label>
             </div>
 
-            <Button type="submit" className="w-full h-12 text-base bg-purple-600 hover:bg-purple-700">
+            {/* ✅ Disabled button until form valid */}
+            <Button
+              type="submit"
+              className={`w-full h-12 text-base ${isFormValid ? "bg-purple-600 hover:bg-purple-700" : "bg-gray-400 cursor-not-allowed"
+                }`}
+              disabled={!isFormValid}
+            >
               Sign Up
             </Button>
           </form>
