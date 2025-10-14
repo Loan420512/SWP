@@ -1,9 +1,51 @@
-"use client"
+"use client";
 
-import { MapPin, CheckCircle2, ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { useEffect, useRef } from "react";
+import mapboxgl from "mapbox-gl"; // Import Mapbox
+import { MapPin, CheckCircle2, ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
+
+// Set your Mapbox access token here
+mapboxgl.accessToken = 'YOUR_MAPBOX_ACCESS_TOKEN';  // Thay thế 'YOUR_MAPBOX_ACCESS_TOKEN' bằng mã token của bạn
 
 export function StationFinderSection() {
+  const mapContainer = useRef(null); // Tạo ref cho phần chứa bản đồ
+
+  // Khởi tạo Mapbox map
+  useEffect(() => {
+    if (mapContainer.current) {
+      console.log("Đang khởi tạo bản đồ..."); // Log kiểm tra việc khởi tạo map
+
+      const map = new mapboxgl.Map({
+        container: mapContainer.current,  // Phần tử chứa bản đồ
+        style: "mapbox://styles/mapbox/streets-v11", // Chọn kiểu bản đồ
+        center: [13.4050, 52.5200],  // Toạ độ của Berlin (có thể thay đổi)
+        zoom: 10,  // Mức zoom ban đầu
+      });
+
+      // Thêm các điều khiển cho bản đồ (zoom, xoay)
+      map.addControl(new mapboxgl.NavigationControl(), "top-right");
+
+      map.on('load', () => {
+        console.log("Bản đồ đã được tải thành công!");
+      });
+
+      map.on('error', (e) => {
+        console.error("Lỗi khi tải bản đồ:", e); // Log lỗi nếu có
+      });
+    }
+
+    // Hàm cleanup khi component bị unmount
+    return () => {
+      if (mapContainer.current) {
+        const map = new mapboxgl.Map({
+          container: mapContainer.current,
+        });
+        map.remove(); // Xoá bản đồ khi không còn cần thiết
+      }
+    };
+  }, []);
+
   return (
     <section id="stations" className="py-24 bg-white scroll-mt-16">
       <div className="max-w-7xl mx-auto px-4 mb-12">
@@ -58,6 +100,9 @@ export function StationFinderSection() {
           </div>
         </div>
       </div>
+
+      {/* Map Container */}
+      <div className="map-container mt-8" style={{ height: "400px", width: "100%" }} ref={mapContainer} />
     </section>
-  )
+  );
 }
