@@ -4,45 +4,89 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import styled from "styled-components";
 
-// Styled components for CSS
-const BookingContainer = styled.div`
+// 🌈 Styled Components
+const PageContainer = styled.div`
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  justify-content: center;
   min-height: 100vh;
-  background: linear-gradient(135deg, #4facfe, #00f2fe);
-  font-family: "Poppins", sans-serif;
+  background-color: #f5f2ff;
+  font-family: "Inter", sans-serif;
 `;
 
-const BookingBox = styled.div`
+const LogoSection = styled.div`
+  text-align: center;
+  margin-bottom: 25px;
+`;
+
+const LogoCircle = styled.div`
+  background-color: #c0ff4a;
+  color: #000;
+  font-size: 38px;
+  font-weight: bold;
+  border-radius: 50%;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+`;
+
+const BrandName = styled.h1`
+  font-size: 26px;
+  font-weight: 700;
+  margin-top: 10px;
+  margin-bottom: 5px;
+`;
+
+const Subtitle = styled.p`
+  font-size: 14px;
+  color: #555;
+`;
+
+const FormBox = styled.div`
   background: #fff;
-  padding: 30px 40px;
-  border-radius: 20px;
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  padding: 35px;
+  border-radius: 18px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
   width: 400px;
   text-align: center;
 `;
 
+const Title = styled.h2`
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+`;
+
+const SubText = styled.p`
+  font-size: 13px;
+  color: #666;
+  margin-bottom: 20px;
+`;
+
 const FormGroup = styled.div`
-  margin-bottom: 15px;
   text-align: left;
+  margin-bottom: 15px;
 `;
 
 const Label = styled.label`
   display: block;
-  font-weight: 600;
+  font-weight: 500;
   color: #333;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
 `;
 
 const Input = styled.input`
   width: 100%;
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 15px;
+  border: 1px solid #ddd;
+  font-size: 14px;
   transition: border-color 0.2s;
-  
+
   &:focus {
     border-color: #0077ff;
     outline: none;
@@ -53,10 +97,10 @@ const Select = styled.select`
   width: 100%;
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 15px;
+  border: 1px solid #ddd;
+  font-size: 14px;
   transition: border-color 0.2s;
-  
+
   &:focus {
     border-color: #0077ff;
     outline: none;
@@ -67,10 +111,10 @@ const TextArea = styled.textarea`
   width: 100%;
   padding: 10px 12px;
   border-radius: 8px;
-  border: 1px solid #ccc;
-  font-size: 15px;
-  min-height: 80px;
-  resize: vertical;
+  border: 1px solid #ddd;
+  font-size: 14px;
+  resize: none;
+  height: 70px;
   transition: border-color 0.2s;
 
   &:focus {
@@ -81,39 +125,41 @@ const TextArea = styled.textarea`
 
 const Button = styled.button`
   width: 100%;
-  background: #0077ff;
+  background-color: #0057ff;
   color: #fff;
   border: none;
   padding: 12px;
+  font-size: 15px;
+  font-weight: 600;
   border-radius: 8px;
   cursor: pointer;
-  font-weight: 600;
-  transition: background 0.2s;
-  
+  transition: 0.3s ease;
+
   &:hover {
-    background: #005fe0;
+    background-color: #0040cc;
   }
 
   &:disabled {
-    background: #b0c7f1;
+    background-color: #a9c4ff;
     cursor: not-allowed;
   }
 `;
 
-const BookingMessage = styled.p`
+const Message = styled.p`
   margin-top: 15px;
   font-weight: 500;
-  font-size: 15px;
   color: #333;
 `;
 
+
+// 🌟 Booking Component
 const Booking = () => {
   const router = useRouter();
-  const [station, setStation] = useState<string>("");
-  const [date, setDate] = useState<string>("");
-  const [note, setNote] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(false);
-  const [message, setMessage] = useState<string>("");
+  const [station, setStation] = useState("");
+  const [date, setDate] = useState("");
+  const [note, setNote] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,7 +167,7 @@ const Booking = () => {
     setMessage("");
 
     const bookingData = {
-      userId: "U001", // Replace with the current user ID
+      userId: "U001", // Replace with the logged-in user ID
       stationId: station,
       bookingTime: date,
       note: note,
@@ -138,26 +184,31 @@ const Booking = () => {
 
       if (res.ok) {
         setMessage("✅ Booking successful!");
-        console.log("Booking result:", data);
         setStation("");
         setDate("");
         setNote("");
-        // router.push("/thankyou"); // Uncomment if you want to redirect
       } else {
         setMessage("❌ " + (data.message || "Booking failed!"));
       }
-    } catch (error) {
-      console.error(error);
-      setMessage("⚠️ Connection error to the API!");
+    } catch (err) {
+      console.error(err);
+      setMessage("⚠️ Could not connect to the API!");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <BookingContainer>
-      <BookingBox>
-        <h2>Book a Battery Swap</h2>
+    <PageContainer>
+      <LogoSection>
+        <LogoCircle>⚡</LogoCircle>
+        <BrandName>EVSwap</BrandName>
+        <Subtitle>Battery Swap Station Management</Subtitle>
+      </LogoSection>
+
+      <FormBox>
+        <Title>Booking a Battery Swap</Title>
+        <SubText>Choose a station and time for your booking</SubText>
 
         <form onSubmit={handleSubmit}>
           <FormGroup>
@@ -185,11 +236,11 @@ const Booking = () => {
           </FormGroup>
 
           <FormGroup>
-            <Label>Notes</Label>
+            <Label>Notes (optional)</Label>
             <TextArea
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Add any notes (optional)"
+              placeholder="Add any notes..."
             />
           </FormGroup>
 
@@ -198,9 +249,9 @@ const Booking = () => {
           </Button>
         </form>
 
-        {message && <BookingMessage>{message}</BookingMessage>}
-      </BookingBox>
-    </BookingContainer>
+        {message && <Message>{message}</Message>}
+      </FormBox>
+    </PageContainer>
   );
 };
 
