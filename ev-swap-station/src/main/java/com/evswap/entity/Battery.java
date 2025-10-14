@@ -5,13 +5,9 @@ import lombok.*;
 
 @Entity
 @Table(name = "Battery")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
+@Getter @Setter
+@NoArgsConstructor @AllArgsConstructor @Builder
 public class Battery {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "BatteryID")
@@ -21,4 +17,9 @@ public class Battery {
     private Double price;
     private String status;
     private String detailInformation;
+
+    // ✅ Constructor nhận ID
+    public Battery(Integer id) {
+        this.id = id;
+    }
 }

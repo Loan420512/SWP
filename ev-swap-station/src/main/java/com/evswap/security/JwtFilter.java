@@ -1,5 +1,6 @@
 package com.evswap.security;
 
+import com.evswap.entity.Role;
 import com.evswap.repository.RevokedTokenRepository;
 import com.evswap.repository.UserRepository;
 import jakarta.servlet.FilterChain;
@@ -10,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.lang.NonNull;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -38,30 +40,37 @@ public class JwtFilter extends OncePerRequestFilter {
         if (auth != null && auth.startsWith("Bearer ")) {
             String token = auth.substring(7);
             try {
-                // Chặn token đã bị revoke (và vẫn còn hạn)
+                // 1️⃣ Kiểm tra token đã bị revoke (và vẫn còn hạn)
                 String hash = TokenHash.sha256Hex(token);
                 if (revokedRepo.existsByTokenHashAndExpiresAtAfter(hash, Instant.now())) {
                     chain.doFilter(req, res);
                     return;
                 }
 
+                // 2️⃣ Parse JWT & lấy username
                 var claims = jwt.parse(token).getBody();
-                var username = claims.getSubject();
+                String username = claims.getSubject();
 
-                var user = userRepo.findByUsername(username).orElse(null);
-                if (user != null) {
+                // 3️⃣ Tải user và gán quyền dựa trên Role enum
+                userRepo.findByUsername(username).ifPresent(user -> {
+                    Role role = user.getRole(); // enum (ADMIN, STAFF, DRIVER)
+                    List<GrantedAuthority> authorities = List.of(
+                            new SimpleGrantedAuthority("ROLE_" + role.name())
+                    );
+
                     var authToken = new UsernamePasswordAuthenticationToken(
-                            username, null,
-                            List.of(new SimpleGrantedAuthority("ROLE_" + user.getRole().name()))
+                            username, // principal
+                            null,     // credentials
+                            authorities
                     );
                     SecurityContextHolder.getContext().setAuthentication(authToken);
-                }
+                });
+
             } catch (Exception ignored) {
-                // Token không hợp lệ/hết hạn -> để anonymous
+                // Token không hợp lệ hoặc hết hạn → để anonymous đi qua
             }
         }
 
         chain.doFilter(req, res);
     }
 }
-

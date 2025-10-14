@@ -1,31 +1,37 @@
 package com.evswap.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
+import lombok.*;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "Transactions")
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
+@Entity @Table(name="Transactions")
+@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
 public class Transaction {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column(name="TransactionID")
     private Long id;
 
-    // Liên kết với User
-    @ManyToOne
-    @JoinColumn(name = "UserID", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="UserID", nullable=false)
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "StationID", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="StationID", nullable=false)
     private Station station;
 
-    @ManyToOne
-    @JoinColumn(name = "PackageID", nullable = false)
-    private PackagePlan packagePlan;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="PackageID")
+    private PackagePlan packagePlan; // có thể null
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="BookingID")
+    private Booking booking; // liên kết giao dịch với booking
 
-    private Double amount;
-    private LocalDateTime transactionTime;
-    private String status; // SUCCESS, FAILED, PENDING
-    private String method; // CREDIT_CARD, MOMO, ZALOPAY
+    @Column(name="Amount")    private BigDecimal amount;
+    @Column(name="TimeDate")  private LocalDateTime transactionTime;
+    @Column(name="Status")    private String status; // PENDING/SUCCESS/FAILED
+    @Column(name="TransactionType") private String transactionType; // DEPOSIT/SWAP/REFUND/SUBSCRIPTION
 }
