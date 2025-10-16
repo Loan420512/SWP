@@ -22,7 +22,7 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest req) {
-        var user = userRepo.findByUsername(req.getUsername())
+        var user = userRepo.findByEmailIgnoreCase(req.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("User không tồn tại"));
 
         if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
@@ -43,6 +43,9 @@ public class AuthServiceImpl implements AuthService {
     public void register(RegisterRequest req) {
         if (userRepo.existsByUsername(req.getUsername())) {
             throw new IllegalArgumentException("Username đã tồn tại");
+        }
+        if (userRepo.existsByEmailIgnoreCase(req.getEmail())) {
+            throw new IllegalArgumentException("Email đã tồn tại");
         }
 
         // Lấy role từ request (enum), nếu muốn mặc định có thể xử lý ở layer DTO/Controller
