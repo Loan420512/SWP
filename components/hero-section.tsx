@@ -1,8 +1,25 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { MapPin } from "lucide-react"
 import Image from "next/image"
+import { useAuth } from "@/hooks/use-auth"
+import { useRouter } from "next/navigation"
 
 export function HeroSection() {
+  const { isLoggedIn } = useAuth()
+  const router = useRouter()
+
+  const handleGetStarted = () => {
+    if (isLoggedIn) {
+      // If logged in, go to booking page
+      router.push("/booking")
+    } else {
+      // If not logged in, go to sign in page
+      router.push("/signin")
+    }
+  }
+
   return (
     <section className="pt-24 pb-12 md:pt-32 md:pb-20">
       <div className="container mx-auto px-4 lg:px-8">
@@ -23,6 +40,9 @@ export function HeroSection() {
             </p>
 
             <div className="flex flex-wrap gap-4">
+              <Button size="lg" className="bg-[#7241CE] text-white hover:bg-[#5f37b0]" onClick={handleGetStarted}>
+                Get Started
+              </Button>
               <Button size="lg" className="bg-[#A2F200] text-black hover:bg-[#8fd600]" asChild>
                 <a href="#stations">
                   <MapPin className="w-4 h-4 mr-2" />

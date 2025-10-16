@@ -8,46 +8,72 @@ import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowLeft, Zap } from "lucide-react"
 import { useState } from "react"
+import { useAuth } from "@/hooks/use-auth"
+import { useRouter } from "next/navigation"
 
 export default function SignInPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
+  const { login } = useAuth()
+  const router = useRouter()
 
   const handleGoogleSignIn = () => {
-    // Google sign-in logic will go here
-    console.log("Google sign-in clicked")
+    const mockUser = {
+      fullName: "Google User",
+      email: "user@gmail.com",
+      userName: "googleuser",
+    }
+    login(mockUser)
+    router.push("/")
   }
-
-  const isFormValid = email.trim() !== "" && password.trim() !== ""
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
-    e.preventDefault()
-    try {
-      const response = await fetch("http://localhost:8080/api/users/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          userName: email,
-          password: password,
-        }),
-      })
+  e.preventDefault()
 
-      if (!response.ok) {
-        throw new Error("Invalid username or password")
-      }
+  try {
+    const response = await fetch("http://localhost:8080/api/users/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        userName: email,
+        password: password,
+      }),
+    })
 
-      const data = await response.json()
-      console.log("Login success:", data)
-
-      localStorage.setItem("user", JSON.stringify(data))
-      window.location.href = "/dashboard"
-    } catch (error: any) {
-      alert(error.message || "Something went wrong")
+    if (!response.ok) {
+      const errorText = await response.text()
+      throw new Error(`Login failed: ${errorText}`)
     }
+
+    const data = await response.json()
+
+    // Giả sử BE trả về: { fullName, email, role, token }
+    const user = {
+      fullName: data.fullName,
+      email: data.email,
+      userName: data.email.split("@")[0],
+      role: data.role,
+      token: data.token,
+    }
+
+    // Lưu user vào context (hook useAuth)
+    login(user)
+
+    // Chuyển hướng theo role
+    if (user.role === "DRIVER") router.push("/driver")
+    else if (user.role === "STAFF") router.push("/staff")
+    else if (user.role === "ADMIN") router.push("/admin")
+    else router.push("/")
+
+  } catch (error) {
+    console.error("Login error:", error)
+    alert("Invalid username or password")
   }
+}
+
 
   return (
     <div className="min-h-screen bg-purple-50 flex items-center justify-center p-4">
@@ -149,14 +175,7 @@ export default function SignInPage() {
               </Link>
             </div>
 
-            <Button
-              type="submit"
-              disabled={!isFormValid}
-              className={`w-full h-12 text-base text-white ${isFormValid
-                  ? "bg-purple-600 hover:bg-purple-700"
-                  : "bg-gray-400 cursor-not-allowed"
-                }`}
-            >
+            <Button type="submit" className="w-full h-12 text-base bg-purple-600 hover:bg-purple-700 text-white">
               Sign In
             </Button>
           </form>

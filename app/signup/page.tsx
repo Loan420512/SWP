@@ -1,14 +1,58 @@
-"use client";
+"use client"
 
-import { useState } from "react";
-import { Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Checkbox } from "@/components/ui/checkbox";
-import Link from "next/link";
-import { User, Mail, Lock, ArrowLeft } from "lucide-react";
+import type React from "react"
+
+import { useState } from "react"
+import { Zap } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import Link from "next/link"
+import { User, Mail, Lock, ArrowLeft, MapPin, ChevronDown } from "lucide-react"
+import { useAuth } from "@/hooks/use-auth"
+import { useRouter } from "next/navigation"
+
+const VIETNAM_PROVINCES = [
+  "Tuyên Quang",
+  "Cao Bằng",
+  "Lai Châu",
+  "Lào Cai",
+  "Thái Nguyên",
+  "Điện Biên",
+  "Lạng Sơn",
+  "Sơn La",
+  "Phú Thọ",
+  "Hà Nội",
+  "Hải Phòng",
+  "Bắc Ninh",
+  "Quảng Ninh",
+  "Hưng Yên",
+  "Ninh Bình",
+  "Thanh Hóa",
+  "Nghệ An",
+  "Hà Tĩnh",
+  "Quảng Trị",
+  "Huế",
+  "Đà Nẵng",
+  "Quảng Ngãi",
+  "Gia Lai",
+  "Đắk Lắk",
+  "Khánh Hòa",
+  "Lâm Đồng",
+  "Đồng Nai",
+  "Tây Ninh",
+  "TP. Hồ Chí Minh",
+  "Đồng Tháp",
+  "An Giang",
+  "Vĩnh Long",
+  "Cần Thơ",
+  "Cà Mau",
+]
 
 export default function SignupPage() {
+  const { login } = useAuth()
+  const router = useRouter()
+
   const [formData, setFormData] = useState({
     userName: "",
     fullName: "",
@@ -16,23 +60,34 @@ export default function SignupPage() {
     email: "",
     address: "",
     password: "",
-    confirmPassword: ""
-  });
+    confirmPassword: "",
+  })
 
-  // ✅ Thêm state để theo dõi checkbox “agree”
-  const [agreed, setAgreed] = useState(false);
+  const [agreed, setAgreed] = useState(false)
 
-  const handleChange = (
-    e: React.ChangeEvent<
-      HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-    >
-  ) => {
-    const { name, value } = e.target;
+  const [provinceSearch, setProvinceSearch] = useState("")
+  const [showProvinceDropdown, setShowProvinceDropdown] = useState(false)
+  const [filteredProvinces, setFilteredProvinces] = useState(VIETNAM_PROVINCES)
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target
     setFormData((prev) => ({
       ...prev,
       [name]: value,
-    }));
-  };
+    }))
+  }
+
+  const handleProvinceSearch = (value: string) => {
+    setProvinceSearch(value)
+    const filtered = VIETNAM_PROVINCES.filter((province) => province.toLowerCase().includes(value.toLowerCase()))
+    setFilteredProvinces(filtered)
+  }
+
+  const handleProvinceSelect = (province: string) => {
+    setFormData((prev) => ({ ...prev, address: province }))
+    setProvinceSearch(province)
+    setShowProvinceDropdown(false)
+  }
 
   const isFormValid =
     formData.userName.trim() &&
@@ -43,20 +98,19 @@ export default function SignupPage() {
     formData.password.trim() &&
     formData.confirmPassword.trim() &&
     formData.password === formData.confirmPassword &&
-    agreed;
-
+    agreed
 
   const handleEmailSignup = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!agreed) {
-      alert("You must agree to the Terms and Privacy Policy before signing up.");
-      return;
+      alert("You must agree to the Terms and Privacy Policy before signing up.")
+      return
     }
 
     if (formData.password !== formData.confirmPassword) {
-      alert("Passwords do not match!");
-      return;
+      alert("Passwords do not match!")
+      return
     }
 
     try {
@@ -71,29 +125,37 @@ export default function SignupPage() {
           address: formData.address,
           password: formData.password,
         }),
-      });
+      })
 
       if (res.ok) {
-        alert("Signup successful! You can now log in.");
-        window.location.href = "/signin";
+        login({
+          fullName: formData.fullName,
+          email: formData.email,
+          userName: formData.userName,
+        })
+        router.push("/")
       } else {
-        const errData = await res.json();
-        alert("Signup failed: " + (errData.message || res.statusText));
+        const errData = await res.json()
+        alert("Signup failed: " + (errData.message || res.statusText))
       }
     } catch (err) {
-      alert("Error: " + err);
+      alert("Error: " + err)
     }
-  };
+  }
 
   const handleGoogleSignup = () => {
-    alert("Google signup not implemented yet!");
-  };
+    const mockUser = {
+      fullName: "Google User",
+      email: "user@gmail.com",
+      userName: "googleuser",
+    }
+    login(mockUser)
+    router.push("/")
+  }
 
   return (
-
     <div className="min-h-screen bg-purple-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md">
-        {/* Logo and Header */}
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-[#A2F200]">
             <Zap className="w-10 h-10 text-black" />
@@ -102,14 +164,12 @@ export default function SignupPage() {
           <p className="text-gray-600">Battery Swap Station Management</p>
         </div>
 
-        {/* Signup Card */}
         <div className="bg-white rounded-2xl shadow-xl p-8">
           <div className="mb-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Account</h2>
             <p className="text-gray-600">Sign up to access your EVSwap account</p>
           </div>
 
-          {/* Google Sign In */}
           <Button variant="outline" className="w-full mb-6 h-12 text-base bg-transparent" onClick={handleGoogleSignup}>
             <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
               <path
@@ -132,7 +192,6 @@ export default function SignupPage() {
             Continue with Google
           </Button>
 
-          {/* Divider */}
           <div className="relative mb-6">
             <div className="absolute inset-0 flex items-center">
               <div className="w-full border-t border-gray-200"></div>
@@ -142,9 +201,7 @@ export default function SignupPage() {
             </div>
           </div>
 
-          {/* Signup Form */}
           <form onSubmit={handleEmailSignup} className="space-y-4">
-            {/* Full Name */}
             <div>
               <label htmlFor="fullName" className="block text-sm font-medium text-gray-900 mb-2">
                 Full Name
@@ -163,7 +220,6 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* Username */}
             <div>
               <label htmlFor="userName" className="block text-sm font-medium text-gray-900 mb-2">
                 Username
@@ -182,7 +238,6 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* Phone Number */}
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-900 mb-2">
                 Phone Number
@@ -200,7 +255,6 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* Email */}
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-900 mb-2">
                 Email
@@ -219,26 +273,46 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* Address */}
             <div>
               <label htmlFor="address" className="block text-sm font-medium text-gray-900 mb-2">
                 Address
               </label>
-              <select
-                id="address"
-                name="address"
-                className="w-full border border-gray-300 rounded-lg p-3 h-12 text-gray-700 focus:outline-none focus:ring-2 focus:ring-purple-500"
-                required
-                onChange={handleChange}
-              >
-                <option value="">Select city</option>
-                <option value="Ha Noi">Ha Noi</option>
-                <option value="TPHCM">TP. Ho Chi Minh</option>
-                <option value="Da Nang">Da Nang</option>
-              </select>
+              <div className="relative">
+                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 z-10" />
+                <Input
+                  id="address"
+                  name="address"
+                  type="text"
+                  placeholder="Tìm kiếm tỉnh/thành phố"
+                  className="pl-10 pr-10 h-12"
+                  value={provinceSearch}
+                  onChange={(e) => handleProvinceSearch(e.target.value)}
+                  onFocus={() => setShowProvinceDropdown(true)}
+                  autoComplete="off"
+                />
+                <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+
+                {showProvinceDropdown && (
+                  <div className="absolute z-50 w-full mt-1 bg-white border border-gray-200 rounded-lg shadow-lg max-h-60 overflow-y-auto">
+                    {filteredProvinces.length > 0 ? (
+                      filteredProvinces.map((province) => (
+                        <button
+                          key={province}
+                          type="button"
+                          className="w-full text-left px-4 py-2 hover:bg-purple-50 transition-colors text-gray-700"
+                          onClick={() => handleProvinceSelect(province)}
+                        >
+                          {province}
+                        </button>
+                      ))
+                    ) : (
+                      <div className="px-4 py-2 text-gray-500 text-sm">Không tìm thấy tỉnh/thành phố</div>
+                    )}
+                  </div>
+                )}
+              </div>
             </div>
 
-            {/* Password */}
             <div>
               <label htmlFor="password" className="block text-sm font-medium text-gray-900 mb-2">
                 Password
@@ -257,7 +331,6 @@ export default function SignupPage() {
               </div>
             </div>
 
-            {/* Confirm Password */}
             <div>
               <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-900 mb-2">
                 Confirm Password
@@ -277,11 +350,7 @@ export default function SignupPage() {
             </div>
 
             <div className="flex items-center space-x-2">
-              <Checkbox
-                id="terms"
-                checked={agreed}
-                onCheckedChange={(checked) => setAgreed(!!checked)}
-              />
+              <Checkbox id="terms" checked={agreed} onCheckedChange={(checked) => setAgreed(!!checked)} />
               <label
                 htmlFor="terms"
                 className="text-sm text-gray-600 leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
@@ -297,18 +366,17 @@ export default function SignupPage() {
               </label>
             </div>
 
-            {/* ✅ Disabled button until form valid */}
             <Button
               type="submit"
-              className={`w-full h-12 text-base ${isFormValid ? "bg-purple-600 hover:bg-purple-700" : "bg-gray-400 cursor-not-allowed"
-                }`}
+              className={`w-full h-12 text-base ${
+                isFormValid ? "bg-purple-600 hover:bg-purple-700" : "bg-gray-400 cursor-not-allowed"
+              }`}
               disabled={!isFormValid}
             >
               Sign Up
             </Button>
           </form>
 
-          {/* Login Link */}
           <p className="text-center text-sm text-gray-600 mt-6">
             Already have an account?{" "}
             <Link href="/signin" className="text-primary font-medium hover:underline">
@@ -317,7 +385,6 @@ export default function SignupPage() {
           </p>
         </div>
 
-        {/* Back to Home */}
         <Link
           href="/"
           className="flex items-center justify-center text-gray-600 hover:text-gray-900 mt-6 transition-colors"
