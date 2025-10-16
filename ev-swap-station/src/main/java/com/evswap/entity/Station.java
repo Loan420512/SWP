@@ -2,7 +2,9 @@ package com.evswap.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties({"hibernateLazyInitializer","handler"})
 @Entity
 @Table(name = "Station")
 @Getter @Setter
@@ -23,3 +25,4 @@ public class Station {
         this.id = id;
     }
 }
+
