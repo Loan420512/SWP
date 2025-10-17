@@ -115,6 +115,8 @@ export function Header() {
                     <div className="px-4 py-3 border-b border-gray-100">
                       <p className="text-sm font-semibold text-gray-900">{user.fullName}</p>
                       <p className="text-xs text-gray-500 mt-1">{user.email}</p>
+                      <p className="text-xs text-gray-500 mt-1">{user.role ? `Role: ${user.role}` : "Role: N/A"}
+                      </p>
                     </div>
                     <button
                       onClick={handleLogout}

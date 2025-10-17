@@ -1,8 +1,13 @@
+"use client"
+
 import { Button } from "@/components/ui/button"
 import { Zap } from "lucide-react"
 import Link from "next/link"
+import { useAuth } from "@/hooks/use-auth"
 
 export function CtaSection() {
+  const { isLoggedIn } = useAuth()
+
   return (
     <section className="relative py-32 px-4 overflow-hidden">
       <div className="absolute inset-0 bg-[#7241CE]" />
@@ -28,13 +33,15 @@ export function CtaSection() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-            <Button
-              size="lg"
-              className="bg-white text-[#7241CE] hover:bg-gray-100 font-semibold text-lg px-8 py-6 h-auto shadow-xl hover:shadow-2xl transition-all"
-              asChild
-            >
-              <Link href="/signup">Sign Up Now</Link>
-            </Button>
+            {!isLoggedIn && (
+              <Button
+                size="lg"
+                className="bg-white text-[#7241CE] hover:bg-gray-100 font-semibold text-lg px-8 py-6 h-auto shadow-xl hover:shadow-2xl transition-all"
+                asChild
+              >
+                <Link href="/signup">Sign Up Now</Link>
+              </Button>
+            )}
             <Button
               size="lg"
               variant="outline"

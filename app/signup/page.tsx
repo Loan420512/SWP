@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Zap } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -50,7 +49,7 @@ const VIETNAM_PROVINCES = [
 ]
 
 export default function SignupPage() {
-  const { login } = useAuth()
+  const { login, isLoggedIn, isLoading } = useAuth()
   const router = useRouter()
 
   const [formData, setFormData] = useState({
@@ -68,6 +67,12 @@ export default function SignupPage() {
   const [provinceSearch, setProvinceSearch] = useState("")
   const [showProvinceDropdown, setShowProvinceDropdown] = useState(false)
   const [filteredProvinces, setFilteredProvinces] = useState(VIETNAM_PROVINCES)
+
+  useEffect(() => {
+    if (!isLoading && isLoggedIn) {
+      router.push("/")
+    }
+  }, [isLoggedIn, isLoading, router])
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target
@@ -128,12 +133,8 @@ export default function SignupPage() {
       })
 
       if (res.ok) {
-        login({
-          fullName: formData.fullName,
-          email: formData.email,
-          userName: formData.userName,
-        })
-        router.push("/")
+        alert("Account created successfully! Please sign in with your credentials.")
+        router.push("/signin")
       } else {
         const errData = await res.json()
         alert("Signup failed: " + (errData.message || res.statusText))
@@ -283,7 +284,7 @@ export default function SignupPage() {
                   id="address"
                   name="address"
                   type="text"
-                  placeholder="Tìm kiếm tỉnh/thành phố"
+                  placeholder="Search for province/city"
                   className="pl-10 pr-10 h-12"
                   value={provinceSearch}
                   onChange={(e) => handleProvinceSearch(e.target.value)}
