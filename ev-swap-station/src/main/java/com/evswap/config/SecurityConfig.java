@@ -46,8 +46,10 @@ public class SecurityConfig {
 
                         // ---- Booking (BR1/BR2) ----
                         // tạo booking & hủy booking: Driver/Staff/Admin
-                        .requestMatchers(HttpMethod.POST, "/api/bookings").hasAnyRole("Driver","Staff","Admin")
-                        .requestMatchers(HttpMethod.POST, "/api/bookings/*/cancel").hasAnyRole("Driver","Staff","Admin")
+                        .requestMatchers(HttpMethod.POST, "/api/bookings")
+                        .hasAnyRole("DRIVER","STAFF","ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/api/bookings/*/cancel")
+                        .hasAnyRole("DRIVER","STAFF","ADMIN")
 
                         // Cho phép preflight (CORS) nếu có front-end gọi
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
