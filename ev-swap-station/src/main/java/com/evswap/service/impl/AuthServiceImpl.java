@@ -25,9 +25,32 @@ public class AuthServiceImpl implements AuthService {
         var user = userRepo.findByEmailIgnoreCase(req.getEmail())
                 .orElseThrow(() -> new IllegalArgumentException("User không tồn tại"));
 
-        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
-            throw new IllegalArgumentException("Sai mật khẩu");
+//        if (!passwordEncoder.matches(req.getPassword(), user.getPassword())) {
+//            throw new IllegalArgumentException("Sai mật khẩu");
+//        }
+        String raw = req.getPassword();
+        String stored = user.getPassword();
+
+        if (looksEncoded(stored)) {
+            // Trường hợp DB đã lưu hash (bcrypt/argon2/…)
+            if (!passwordEncoder.matches(raw, stored)) {
+                throw new IllegalArgumentException("Sai mật khẩu");
+            }
+        } else {
+            // Trường hợp DB đang lưu plaintext (dữ liệu cứng)
+            if (!safeEquals(stored, raw)) {
+                throw new IllegalArgumentException("Sai mật khẩu");
+            }
+            // (Tuỳ chọn nhưng nên có) Tự động migrate sang hash sau lần login đầu tiên
+            try {
+                user.setPassword(passwordEncoder.encode(raw));
+                // đổi "userRepository" cho đúng tên repo đang @Autowired trong class của bạn
+                userRepo.save(user);
+            } catch (Exception ignore) {
+                // nếu bạn chưa muốn cập nhật tại đây, có thể bỏ cả khối try-catch này
+            }
         }
+
 
         // role là enum
         Role role = user.getRole();
@@ -64,4 +87,25 @@ public class AuthServiceImpl implements AuthService {
 
         userRepo.save(u);
     }
+
+    /** Nhận diện chuỗi có vẻ là mật khẩu đã mã hoá */
+    private boolean looksEncoded(String s) {
+        if (s == null) return false;
+        // DelegatingPasswordEncoder format: {id}hash
+        if (s.startsWith("{")) return true;
+        // Một số prefix thông dụng
+        return s.startsWith("$2a$") || s.startsWith("$2b$") || s.startsWith("$2y$")  // BCrypt
+                || s.startsWith("$argon2")                                              // Argon2
+                || s.startsWith("$scrypt$");                                            // scrypt
+    }
+
+    /** So sánh tránh timing leak (đủ dùng cho plaintext legacy) */
+    private boolean safeEquals(String a, String b) {
+        if (a == null || b == null) return false;
+        if (a.length() != b.length()) return false;
+        int r = 0;
+        for (int i = 0; i < a.length(); i++) r |= a.charAt(i) ^ b.charAt(i);
+        return r == 0;
+    }
+
 }
