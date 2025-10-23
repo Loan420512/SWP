@@ -6,148 +6,12 @@
   <component name="ChangeListManager">
     <list default="true" id="566f07c6-5d30-4344-91cf-e1a26b46f9b2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/HELP.md" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/mvnw" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/mvnw.cmd" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/pom.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/SwpApplication.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/controller/AuthController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/controller/BatteryController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/controller/BookingController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/controller/FeedbackController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/controller/InventoryController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/controller/PackagePlanController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/controller/StationController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/controller/TransactionController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/controller/UserController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/controller/VehicleController.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/dto/LoginRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/dto/RegisterRequest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/entity/Battery.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/entity/Booking.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/entity/Feedback.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/entity/Inventory.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/entity/PackagePlan.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/entity/Role.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/entity/Station.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/entity/Transaction.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/entity/User.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/entity/Vehicle.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/repository/BatteryRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/repository/BookingRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/repository/FeedbackRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/repository/InventoryRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/repository/PackagePlanRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/repository/StationRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/repository/TransactionRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/repository/UserRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/repository/VehicleRepository.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/security/JwtFilter.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/service/BatteryService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/service/BookingService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/service/FeedbackService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/service/InventoryService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/service/PackagePlanService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/service/StationService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/service/TransactionService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/service/UserService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/service/VehicleService.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/java/com/evswap/evswapstation/service/impl/AuthServiceImpl.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/main/resources/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/src/test/java/com/evswap/evswapstation/SwpApplicationTests.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/application.properties" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/SwpApplication.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/controller/AuthController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/controller/BatteryController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/controller/BookingController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/controller/FeedbackController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/controller/InventoryController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/controller/PackagePlanController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/controller/StationController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/controller/TransactionController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/controller/UserController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/controller/VehicleController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/dto/LoginRequest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/dto/RegisterRequest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Battery$BatteryBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Battery.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Booking$BookingBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Booking.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Feedback.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Inventory$InventoryBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Inventory.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/PackagePlan$PackagePlanBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/PackagePlan.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Role.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Station$StationBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Station.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Transaction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/User$UserBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/User.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Vehicle$VehicleBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Vehicle.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/repository/BatteryRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/repository/BookingRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/repository/FeedbackRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/repository/InventoryRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/repository/PackagePlanRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/repository/StationRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/repository/TransactionRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/repository/UserRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/repository/VehicleRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/service/BatteryService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/service/BookingService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/service/FeedbackService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/service/InventoryService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/service/PackagePlanService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/service/StationService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/service/TransactionService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/service/UserService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/classes/com/evswap/evswapstation/service/VehicleService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/ev-swap-station/ev-swap-station/target/test-classes/com/evswap/evswapstation/SwpApplicationTests.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/SwpApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/SwpApplication.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/security/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/security/JwtUtil.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/VehicleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/VehicleController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/VehicleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/VehicleService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/resources/application.properties" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/target/classes/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/SwpApplication.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/controller/BatteryController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/controller/BookingController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/controller/InventoryController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/controller/StationController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/controller/UserController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/controller/VehicleController.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/dto/LoginRequest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/dto/RegisterRequest.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Battery$BatteryBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Battery.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Booking$BookingBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Booking.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Feedback.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Inventory$InventoryBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Inventory.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/PackagePlan$PackagePlanBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/PackagePlan.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Station$StationBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Station.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Transaction.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/User$UserBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/User.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Vehicle$VehicleBuilder.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/entity/Vehicle.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/repository/BatteryRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/repository/BookingRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/repository/FeedbackRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/repository/InventoryRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/repository/PackagePlanRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/repository/StationRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/repository/TransactionRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/repository/UserRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/repository/VehicleRepository.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/service/BatteryService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/service/BookingService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/service/InventoryService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/service/StationService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/service/UserService.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/com/evswap/evswapstation/service/VehicleService.class" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,6 +42,9 @@
   </component>
   <component name="PropertiesComponent">{
   &quot;keyToString&quot;: {
+    &quot;Application.SwpApplication.executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ev-swap-station [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.ev-swap-station [install].executor&quot;: &quot;Run&quot;,
     &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
     &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
     &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
@@ -197,7 +64,7 @@
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
     &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
     &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;File.Encoding&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;terminal&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -222,14 +89,6 @@
       </method>
     </configuration>
   </component>
-  <component name="SharedIndexes">
-    <attachedChunks>
-      <set>
-        <option value="bundled-jdk-9823dce3aa75-bf35d07a577b-intellij.indexing.shared.core-IU-252.26199.169" />
-        <option value="bundled-js-predefined-d6986cc7102b-9c94529fcfe0-JavaScript-IU-252.26199.169" />
-      </set>
-    </attachedChunks>
-  </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="566f07c6-5d30-4344-91cf-e1a26b46f9b2" name="Changes" comment="" />
@@ -244,5 +103,16 @@
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
 </project>

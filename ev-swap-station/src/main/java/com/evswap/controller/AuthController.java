@@ -36,8 +36,9 @@ public class AuthController {
     public ResponseEntity<ApiResponse> register(@Valid @RequestBody RegisterRequest req) {
         authService.register(req);
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(new ApiResponse("Đăng ký thành công"));
+                .body(new ApiResponse("Đăng ký thành công. Vui lòng nhập thông tin xe đầu tiên."));
     }
+
 
 //    @PostMapping("/login")
 //    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest req) {
@@ -87,5 +88,6 @@ public class AuthController {
         }
         return ResponseEntity.ok(new ApiResponse("Đã đăng xuất"));
     }
+
 }
 
