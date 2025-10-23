@@ -34,4 +34,6 @@ public class Transaction {
     @Column(name="TimeDate")  private LocalDateTime transactionTime;
     @Column(name="Status")    private String status; // PENDING/SUCCESS/FAILED
     @Column(name="TransactionType") private String transactionType; // DEPOSIT/SWAP/REFUND/SUBSCRIPTION
+
+    private String transactionRef; // Mã giao dịch từ cổng thanh toán (VD: VNPAY, Momo)
 }

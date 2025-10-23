@@ -23,4 +23,6 @@ public interface InventoryRepository extends JpaRepository<Inventory, Integer> {
             """, nativeQuery = true)
     Optional<Inventory> lockForUpdate(@Param("stationId") Integer stationId,
                                       @Param("batteryId") Integer batteryId);
+
+    Optional<Inventory> findByStationIdAndBatteryId(Integer stationId, Integer batteryId);
 }
