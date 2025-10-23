@@ -6,11 +6,14 @@ import com.evswap.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.scheduling.annotation.Scheduled;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
+import java.net.URLEncoder;
 
 @Service
 @RequiredArgsConstructor
@@ -171,4 +174,227 @@ public class BookingService {
     private static BigDecimal toBig(Double d) {
         return d == null ? null : BigDecimal.valueOf(d);
     }
+
+    /**
+     * Xác nhận thanh toán đặt cọc thành công.
+     */
+    @Transactional
+    public BookingResponse confirmDeposit(Long id, String txnRef) {
+        Booking booking = bookingRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
+
+        if (!"BOOKED".equalsIgnoreCase(booking.getStatus()))
+            throw new IllegalStateException("Booking not eligible for deposit confirmation");
+
+        booking.setDepositStatus("PAID");
+        bookingRepo.save(booking);
+
+        // Cập nhật Transaction tương ứng
+        Transaction tx = txnRepo.findFirstByBookingIdAndTransactionTypeOrderByTransactionTimeDesc(
+                booking.getId(), "DEPOSIT"
+        ).orElse(null);
+        if (tx != null) {
+            tx.setStatus("SUCCESS");
+            tx.setTransactionRef(txnRef);
+            txnRepo.save(tx);
+        }
+
+        return toResponse(booking);
+    }
+
+    /**
+     * Tự động hủy booking quá hạn (chưa đến trạm, quá holdUntil).
+     * Chạy mỗi 5 phút.
+     */
+    @Scheduled(fixedRate = 5 * 60 * 1000)
+    @Transactional
+    public void autoCancelExpiredBookings() {
+        var expired = bookingRepo.findAllByStatusAndHoldUntilBefore("BOOKED", LocalDateTime.now());
+        for (Booking b : expired) {
+            b.setStatus("CANCELLED");
+            b.setCancelReason("Auto-cancelled due to timeout");
+            b.setCanceledAt(LocalDateTime.now());
+            bookingRepo.save(b);
+
+            Inventory inv = inventoryRepo.findByStationIdAndBatteryId(
+                    b.getStation().getId(), b.getBattery().getId()
+            ).orElse(null);
+            if (inv != null && nz(inv.getHoldQty()) > 0) {
+                inv.setHoldQty(inv.getHoldQty() - 1);
+                inventoryRepo.save(inv);
+            }
+        }
+    }
+
+    /**
+     * Hủy booking với lý do cụ thể.
+     */
+    @Transactional
+    public BookingResponse cancelBooking(Long id, String reason) {
+        Booking booking = bookingRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
+
+        if (!"BOOKED".equalsIgnoreCase(booking.getStatus()) &&
+                !"ARRIVED".equalsIgnoreCase(booking.getStatus())) {
+            throw new IllegalStateException("Booking cannot be cancelled at this stage");
+        }
+
+        booking.setStatus("CANCELLED");
+        booking.setCancelReason(reason);
+        booking.setCanceledAt(LocalDateTime.now());
+        bookingRepo.save(booking);
+
+        // Giải phóng hàng tồn kho nếu còn hold
+        Inventory inv = inventoryRepo.findByStationIdAndBatteryId(
+                booking.getStation().getId(),
+                booking.getBattery().getId()
+        ).orElse(null);
+        if (inv != null && nz(inv.getHoldQty()) > 0) {
+            inv.setHoldQty(Math.max(0, inv.getHoldQty() - 1));
+            inventoryRepo.save(inv);
+        }
+
+        return toResponse(booking);
+    }
+
+    /**
+     * Đánh dấu khách đã đến trạm.
+     */
+    @Transactional
+    public BookingResponse markArrived(Long id) {
+        Booking booking = bookingRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
+
+        if (!"BOOKED".equalsIgnoreCase(booking.getStatus()))
+            throw new IllegalStateException("Only booked bookings can be marked as arrived");
+
+        booking.setStatus("ARRIVED");
+        bookingRepo.save(booking);
+        return toResponse(booking);
+    }
+
+    /**
+     * Hoàn tất booking sau khi đổi pin thành công.
+     */
+    @Transactional
+    public BookingResponse markCompleted(Long id) {
+        Booking booking = bookingRepo.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
+
+        if (!"ARRIVED".equalsIgnoreCase(booking.getStatus()))
+            throw new IllegalStateException("Only arrived bookings can be completed");
+
+        booking.setStatus("COMPLETED");
+        bookingRepo.save(booking);
+        return toResponse(booking);
+    }
+
+    @Transactional(readOnly = true)
+    public String generateMomoQR(Long bookingId) {
+        Booking booking = bookingRepo.findById(bookingId)
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
+
+        BigDecimal amount = booking.getDepositAmount();
+        // SĐT hoặc mã QR cố định của MoMo trạm — bạn có thể cấu hình trong DB hoặc file .env
+        String momoPhone = "0901234567";
+        String message = "Thanh toan coc booking #" + bookingId;
+
+        // URL tạo QR tĩnh cho MoMo (MoMo sẽ tự nhận diện cú pháp này)
+        String qrContent = "2|99|" + momoPhone + "||0|" + amount.intValue() + "|Thanh toan coc|" + message;
+        String qrEncoded = URLEncoder.encode(qrContent, StandardCharsets.UTF_8);
+
+        // Dùng API hiển thị QR của MoMo hoặc website third-party để render hình ảnh
+        String qrDisplayUrl = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + qrEncoded;
+
+        return qrDisplayUrl;
+    }
+
+    @Transactional
+    public BookingResponse confirmDepositManual(Long bookingId) {
+        Booking booking = bookingRepo.findById(bookingId)
+                .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
+
+        if (!"BOOKED".equalsIgnoreCase(booking.getStatus())) {
+            throw new IllegalStateException("Booking must be BOOKED to confirm deposit");
+        }
+
+        booking.setDepositStatus("PAID");
+        bookingRepo.save(booking);
+
+        // Cập nhật transaction
+        Transaction tx = txnRepo.findFirstByBookingIdAndTransactionTypeOrderByTransactionTimeDesc(
+                bookingId, "DEPOSIT"
+        ).orElse(null);
+        if (tx != null) {
+            tx.setStatus("SUCCESS");
+            tx.setTransactionRef("MANUAL-" + System.currentTimeMillis());
+            txnRepo.save(tx);
+        }
+
+        return toResponse(booking);
+    }
+
+
+
+    // ==================== Helpers ====================
+
+    private BookingResponse toResponse(Booking booking) {
+        // --- load đầy đủ entity để tránh lazy null ---
+        User user = booking.getUser() != null
+                ? userRepo.findById(booking.getUser().getId()).orElse(null)
+                : null;
+
+        Station station = booking.getStation() != null
+                ? stationRepo.findById(booking.getStation().getId()).orElse(null)
+                : null;
+
+        Vehicle vehicle = booking.getVehicle() != null
+                ? vehicleRepo.findById(booking.getVehicle().getId()).orElse(null)
+                : null;
+
+        Battery battery = booking.getBattery() != null
+                ? batteryRepo.findById(booking.getBattery().getId()).orElse(null)
+                : null;
+
+        // --- build DTO trả về ---
+        return BookingResponse.builder()
+                .id(booking.getId())
+                .user(user == null ? null : BookingResponse.UserInfo.builder()
+                        .id(user.getId())
+                        .fullName(user.getFullName())
+                        .phone(user.getPhone())
+                        .email(user.getEmail())
+                        .build())
+                .station(station == null ? null : BookingResponse.StationInfo.builder()
+                        .id(station.getId())
+                        .name(station.getStationName())
+                        .address(station.getAddress())
+                        .status(station.getStationStatus())
+                        .build())
+                .vehicle(vehicle == null ? null :
+                        BookingResponse.VehicleInfo.builder()
+                                .id(vehicle.getId())
+                                .vin(vehicle.getVin())
+                                .model(vehicle.getVehicleModel())
+                                .batteryType(vehicle.getBatteryType())
+                                .build())
+                .battery(battery == null ? null :
+                        BookingResponse.BatteryInfo.builder()
+                                .id(battery.getId())
+                                .name(battery.getBatteryName())
+                                .price(toBig(battery.getPrice()))
+                                .status(battery.getStatus())
+                                .build())
+                .timeDate(booking.getTimeDate())
+                .estimatedPrice(booking.getEstimatedPrice())
+                .depositAmount(booking.getDepositAmount())
+                .depositStatus(booking.getDepositStatus())
+                .status(booking.getStatus())
+                .holdUntil(booking.getHoldUntil())
+                .cancelReason(booking.getCancelReason())
+                .canceledAt(booking.getCanceledAt())
+                .build();
+    }
+
+
 }
