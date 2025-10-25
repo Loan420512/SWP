@@ -6,12 +6,7 @@
   <component name="ChangeListManager">
     <list default="true" id="566f07c6-5d30-4344-91cf-e1a26b46f9b2" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/VehicleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/VehicleController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/VehicleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/VehicleService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/resources/application.properties" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/target/classes/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/target/classes/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/repository/VehicleRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/repository/VehicleRepository.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
