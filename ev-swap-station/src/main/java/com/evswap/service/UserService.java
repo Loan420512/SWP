@@ -1,8 +1,11 @@
 package com.evswap.service;
 
 import com.evswap.entity.User;
+import com.evswap.enums.Role;
 import com.evswap.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,6 +15,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     public List<User> getAll() {
         return userRepository.findAll();
@@ -22,6 +26,10 @@ public class UserService {
     }
 
     public User create(User user) {
+        // ✅ Kiểm tra nếu role bị null thì gán mặc định DRIVER
+        if (user.getRole() == null) {
+            user.setRole(Role.DRIVER);
+        }
         return userRepository.save(user);
     }
 
@@ -39,5 +47,11 @@ public class UserService {
 
     public void delete(Integer id) {
         userRepository.deleteById(id);
+    }
+
+    public User registerUser(User user) {
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+        return userRepository.save(user); // return thay vì void
     }
 }

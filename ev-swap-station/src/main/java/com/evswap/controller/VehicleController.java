@@ -22,7 +22,7 @@ public class VehicleController {
 
     private static VehicleDTO toDto(Vehicle v) {
         if (v == null) return null;
-        Integer uid = (v.getUser() != null) ? v.getUser().getId() : null;
+        Integer uid = (v.getUser() != null) ? v.getUser().getUserID() : null;
         String uname = (v.getUser() != null) ? v.getUser().getFullName() : null;
         return new VehicleDTO(v.getId(), v.getVin(), v.getVehicleModel(), v.getBatteryType(), uid, uname);
     }
