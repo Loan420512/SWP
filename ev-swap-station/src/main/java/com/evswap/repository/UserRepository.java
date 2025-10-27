@@ -20,7 +20,7 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     // Nếu đang dùng ở chỗ khác thì cứ giữ lại:
     Optional<User> findByUsername(String username);
-
+    Optional<User> findByEmail(String email);
     // Thêm mới cho login bằng email:
     Optional<User> findByEmailIgnoreCase(String email);
 

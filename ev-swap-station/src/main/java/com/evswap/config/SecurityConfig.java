@@ -36,16 +36,16 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // ---- Auth endpoints ----
-                        // chỉ cho phép không cần token với register của Driver & login
                         .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
-                        // chỉ cho phép không cần token với register của Driver & login
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-
-                        // các auth endpoint còn lại (me, logout, ...) phải có token
                         .requestMatchers("/api/auth/**").authenticated()
 
+                        // ---- Vehicle ----
+                        .requestMatchers("/api/vehicles/**").authenticated()
+
+                        // ---- Battery ----
+                        .requestMatchers("/api/batteries/**").authenticated()
+
                         // ---- Booking (BR1/BR2) ----
-                        // tạo booking & hủy booking: Driver/Staff/Admin
                         .requestMatchers(HttpMethod.POST, "/api/bookings")
                         .hasAnyRole("DRIVER","STAFF","ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/bookings/*/cancel")

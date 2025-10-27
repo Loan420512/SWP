@@ -56,7 +56,9 @@ public class VehicleServiceImpl implements VehicleService {
     @Transactional
     public Vehicle registerFirstVehicle(Vehicle vehicle, String username) {
         User user = userRepository.findByUsername(username)
+                    .or(() -> userRepository.findByEmail(username))
                 .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng"));
+
         vehicle.setUser(user);
         if (vehicleRepository.existsByVin(vehicle.getVin())) {
             throw new RuntimeException("VIN đã tồn tại");
