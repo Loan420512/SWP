@@ -52,8 +52,7 @@ public class BookingService {
         // ---- load basic entities ----
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
-        if (!"Active".equalsIgnoreCase(nz(user.getStatus())))
-            throw new IllegalStateException("User is not active");
+        // User is active by default if it exists
 
         Station station = stationRepo.findById(stationId)
                 .orElseThrow(() -> new IllegalArgumentException("Station not found"));
@@ -99,11 +98,12 @@ public class BookingService {
         BigDecimal deposit = estimatedPrice.multiply(new BigDecimal("0.20"))
                 .setScale(0, RoundingMode.HALF_UP);
 
+        // Create booking with proper IDs
         Booking booking = Booking.builder()
-                .user(User.builder().id(userId).build())
-                .station(Station.builder().id(stationId).build())
-                .vehicle(vehicleId != null ? Vehicle.builder().id(vehicleId).build() : null)
-                .battery(Battery.builder().id(batteryId).build())
+                .user(user)
+                .station(station)
+                .vehicle(vehicle)
+                .battery(battery)
                 .timeDate(timeSlot)
                 .estimatedPrice(estimatedPrice)
                 .depositAmount(deposit)
@@ -114,8 +114,8 @@ public class BookingService {
         booking = bookingRepo.save(booking);
 
         Transaction tx = Transaction.builder()
-                .user(User.builder().id(userId).build())
-                .station(Station.builder().id(stationId).build())
+                .user(user)
+                .station(station)
                 .booking(booking)
                 .amount(deposit)
                 .transactionType("DEPOSIT")
@@ -128,7 +128,7 @@ public class BookingService {
         return BookingResponse.builder()
                 .id(booking.getId())
                 .user(BookingResponse.UserInfo.builder()
-                        .id(user.getId())
+                        .id(user.getUserID())
                         .fullName(user.getFullName())
                         .phone(user.getPhone())
                         .email(user.getEmail())
@@ -341,7 +341,7 @@ public class BookingService {
     private BookingResponse toResponse(Booking booking) {
         // --- load đầy đủ entity để tránh lazy null ---
         User user = booking.getUser() != null
-                ? userRepo.findById(booking.getUser().getId()).orElse(null)
+                ? userRepo.findById(booking.getUser().getUserID()).orElse(null)
                 : null;
 
         Station station = booking.getStation() != null
@@ -360,7 +360,7 @@ public class BookingService {
         return BookingResponse.builder()
                 .id(booking.getId())
                 .user(user == null ? null : BookingResponse.UserInfo.builder()
-                        .id(user.getId())
+                        .id(user.getUserID())
                         .fullName(user.getFullName())
                         .phone(user.getPhone())
                         .email(user.getEmail())

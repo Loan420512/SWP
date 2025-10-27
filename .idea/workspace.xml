@@ -5,10 +5,41 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="566f07c6-5d30-4344-91cf-e1a26b46f9b2" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/JwtAuthenticationFilter.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/WebConfig.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/enums/Role.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/security/CustomUserDetails.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/CustomUserDetailsService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/JwtService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+<<<<<<< HEAD
       <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/SecurityConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/repository/UserRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/impl/VehicleServiceImpl.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/impl/VehicleServiceImpl.java" afterDir="false" />
+=======
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/CleanupConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/CleanupConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/SecurityConfig.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/VehicleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/VehicleController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/dto/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/dto/LoginRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/dto/RegisterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/dto/RegisterRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/dto/UserResponse.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/entity/Role.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/entity/converter/RoleAttributeConverter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/mapper/BookingMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/mapper/UserMapper.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/repository/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/repository/UserRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/security/JwtFilter.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/security/JwtUtil.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/AuthService.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/BookingService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/BookingService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/impl/AuthServiceImpl.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/impl/VehicleServiceImpl.java" beforeDir="false" />
+>>>>>>> 5d441ebf0ec6f3b7b8c6d708001a606ed675491a
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -55,7 +86,7 @@
     &quot;git-widget-placeholder&quot;: &quot;main&quot;,
     &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
     &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;D:/Source FPT/HocKy_5/SWP391/Again/SWP-Team/SWP&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/LENOVO/Documents/GitHub/SWP&quot;,
     &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
     &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
     &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
