@@ -54,7 +54,6 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
                                       @Param("userId") Integer userId);
 
     List<Vehicle> findByUser_Id(Integer userId);
-    List<Vehicle> findByUser_Username(String username);
     boolean existsByVin(String vin);
 
     // --- Projection trả DTO ---
@@ -78,5 +77,4 @@ public interface VehicleRepository extends JpaRepository<Vehicle, Integer> {
         order by v.id desc
     """)
     List<VehicleDTO> findDtosByUserId(@Param("userId") Integer userId);
-
 }

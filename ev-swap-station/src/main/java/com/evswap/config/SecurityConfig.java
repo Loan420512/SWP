@@ -1,12 +1,13 @@
 package com.evswap.config;
 
+import com.evswap.security.JwtFilter;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.http.HttpMethod;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -14,40 +15,37 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
-@EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationFilter jwtAuthFilter;
+    private final JwtFilter jwtFilter;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // ✅ Bật CORS - sử dụng config từ WebConfig
-                .cors(cors -> {})
-                // ✅ Tắt CSRF cho REST API
+                // Stateless + tắt CSRF cho API
                 .csrf(csrf -> csrf.disable())
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+
                 .authorizeHttpRequests(auth -> auth
+                        // Swagger & tài nguyên công khai
                         .requestMatchers(
-                                "/swagger-ui/**",
-                                "/swagger-resources/**",
-                                "/v3/api-docs/**",
-                                "/webjars/**",
-                                "/api/auth/**"
+                                "/", "/error", "/favicon.ico",
+                                "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**"
                         ).permitAll()
 
-
                         // ---- Auth endpoints ----
-                        .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
+                        // chỉ cho phép không cần token với register của Driver & login
+//                      .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
+                        // chỉ cho phép không cần token với register của Driver & login
+                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
+
+                        // các auth endpoint còn lại (me, logout, ...) phải có token
                         .requestMatchers("/api/auth/**").authenticated()
 
-                        // ---- Vehicle ----
-                        .requestMatchers("/api/vehicles/**").authenticated()
-
-                        // ---- Battery ----
-                        .requestMatchers("/api/batteries/**").authenticated()
-
                         // ---- Booking (BR1/BR2) ----
+                        // tạo booking & hủy booking: Driver/Staff/Admin
                         .requestMatchers(HttpMethod.POST, "/api/bookings")
                         .hasAnyRole("DRIVER","STAFF","ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/bookings/*/cancel")
@@ -57,12 +55,28 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Mọi endpoint khác yêu cầu xác thực
-
-                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Cho phép OPTIONS
                         .anyRequest().authenticated()
                 )
-                .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+                // Tắt Basic Auth để tránh popup
+                .httpBasic(b -> b.disable())
+
+                // Trả JSON 401/403 gọn gàng
+                .exceptionHandling(e -> e
+                        .authenticationEntryPoint((req, res, ex) -> {
+                            res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                            res.setContentType("application/json");
+                            res.getWriter().write("{\"error\":\"Unauthorized\"}");
+                        })
+                        .accessDeniedHandler((req, res, ex) -> {
+                            res.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                            res.setContentType("application/json");
+                            res.getWriter().write("{\"error\":\"Forbidden\"}");
+                        })
+                )
+
+                // Thêm JWT filter trước UsernamePasswordAuthenticationFilter
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
@@ -70,10 +84,5 @@ public class SecurityConfig {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
-        return config.getAuthenticationManager();
     }
 }

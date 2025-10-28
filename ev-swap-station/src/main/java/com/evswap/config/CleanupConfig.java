@@ -12,7 +12,6 @@ import java.time.Instant;
 @Component
 @RequiredArgsConstructor
 public class CleanupConfig {
-    
     private final RevokedTokenRepository repo;
 
     // 02:30 mỗi ngày
