@@ -35,7 +35,7 @@ public class SecurityConfig {
                                 "/webjars/**",
                                 "/api/auth/**"
                         ).permitAll()
-<<<<<<< HEAD
+
 
                         // ---- Auth endpoints ----
                         .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
@@ -57,9 +57,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Mọi endpoint khác yêu cầu xác thực
-=======
+
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll() // Cho phép OPTIONS
->>>>>>> 5d441ebf0ec6f3b7b8c6d708001a606ed675491a
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
