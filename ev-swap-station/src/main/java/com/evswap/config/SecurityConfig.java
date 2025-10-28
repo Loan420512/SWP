@@ -37,7 +37,7 @@ public class SecurityConfig {
 
                         // ---- Auth endpoints ----
                         // chỉ cho phép không cần token với register của Driver & login
-//                      .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
                         // chỉ cho phép không cần token với register của Driver & login
                         .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 

@@ -9,4 +9,3 @@ public interface AuthService {
     LoginResponse login(LoginRequest req);
     void register(RegisterRequest req);
 }
-

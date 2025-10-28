@@ -15,5 +15,3 @@ public class RegisterRequest {
     @NotBlank private String email;
     @NotBlank private String address;
 }
-
-
