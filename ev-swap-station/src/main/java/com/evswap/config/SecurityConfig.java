@@ -36,32 +36,34 @@ public class SecurityConfig {
                         ).permitAll()
 
                         // ---- Auth endpoints ----
-                        // chỉ cho phép không cần token với register của Driver & login
+                        // Cho phép đăng nhập & đăng ký không cần token
                         .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
-                        // chỉ cho phép không cần token với register của Driver & login
-                        .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
 
-                        // các auth endpoint còn lại (me, logout, ...) phải có token
+                        // Các endpoint khác trong auth yêu cầu token
                         .requestMatchers("/api/auth/**").authenticated()
 
+                        // ---- Vehicle API ----
+                        // Cho phép Driver/Staff/Admin truy cập
+                        .requestMatchers("/api/vehicles/**")
+                        .hasAnyRole("DRIVER", "STAFF", "ADMIN")
+
                         // ---- Booking (BR1/BR2) ----
-                        // tạo booking & hủy booking: Driver/Staff/Admin
                         .requestMatchers(HttpMethod.POST, "/api/bookings")
                         .hasAnyRole("DRIVER","STAFF","ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/bookings/*/cancel")
                         .hasAnyRole("DRIVER","STAFF","ADMIN")
 
-                        // Cho phép preflight (CORS) nếu có front-end gọi
+                        // Cho phép preflight (CORS)
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         // Mọi endpoint khác yêu cầu xác thực
                         .anyRequest().authenticated()
                 )
 
-                // Tắt Basic Auth để tránh popup
+                // Tắt Basic Auth
                 .httpBasic(b -> b.disable())
 
-                // Trả JSON 401/403 gọn gàng
+                // Xử lý lỗi 401 / 403 trả JSON
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((req, res, ex) -> {
                             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -75,7 +77,7 @@ public class SecurityConfig {
                         })
                 )
 
-                // Thêm JWT filter trước UsernamePasswordAuthenticationFilter
+                // Thêm JWT filter
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

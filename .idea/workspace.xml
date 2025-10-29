@@ -7,12 +7,9 @@
     <list default="true" id="492e939b-6615-4af4-8d3d-07c3684876a0" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/SecurityConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/config/SecurityConfig.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/dto/LoginRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/dto/LoginRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/dto/LoginResponse.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/dto/LoginResponse.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/dto/RegisterRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/dto/RegisterRequest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/security/JwtUtil.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/security/JwtUtil.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/AuthService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/AuthService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/VehicleController.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/controller/VehicleController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/entity/Vehicle.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/entity/Vehicle.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/VehicleService.java" beforeDir="false" afterPath="$PROJECT_DIR$/ev-swap-station/src/main/java/com/evswap/service/VehicleService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -22,23 +19,23 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 3
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 3
+}</component>
   <component name="ProjectId" id="34hXGLTq6PihaETkqPe75yuB9cJ" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Application.SwpApplication.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "main",
-    "kotlin-language-version-configured": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Application.SwpApplication.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;Duy-task&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
       <changelist id="492e939b-6615-4af4-8d3d-07c3684876a0" name="Changes" comment="" />
