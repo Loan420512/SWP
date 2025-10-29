@@ -31,14 +31,10 @@ public class BookingService {
      * Thực hiện BR1 – BOOKED (cọc 20%). Trả về DTO đã “dựng sẵn” dữ liệu để không dính lazy proxy.
      */
     @Transactional
-    public BookingResponse bookWithPassiveDeposit(Integer userId,
-                                                  Integer stationId,
-                                                  Integer vehicleId,
-                                                  Integer batteryId,
-                                                  OffsetDateTime timeSlotOffset,
-                                                  BigDecimal estimatedPrice,   // có thể null/<=0
+    public BookingResponse bookWithPassiveDeposit(Integer userId, Integer stationId,
+                                                  Integer vehicleId, Integer batteryId,
+                                                  OffsetDateTime timeSlotOffset, BigDecimal estimatedPrice,   // có thể null/<=0
                                                   int holdMinutes) {
-
         // ---- validate inputs ----
         if (timeSlotOffset == null)
             throw new IllegalArgumentException("timeSlot required");
@@ -334,8 +330,6 @@ public class BookingService {
         return toResponse(booking);
     }
 
-
-
     // ==================== Helpers ====================
 
     private BookingResponse toResponse(Booking booking) {
@@ -395,6 +389,4 @@ public class BookingService {
                 .canceledAt(booking.getCanceledAt())
                 .build();
     }
-
-
 }
