@@ -39,11 +39,6 @@ public class AuthController {
                 .body(new ApiResponse("Đăng ký thành công"));
     }
 
-//    @PostMapping("/login")
-//    public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest req) {
-//        return ResponseEntity.ok(authService.login(req));
-//    }
-
     @PostMapping("/login")
     public ResponseEntity<LoginResponse> login(@Valid @RequestBody LoginRequest req) {
         return ResponseEntity.ok(authService.login(req));

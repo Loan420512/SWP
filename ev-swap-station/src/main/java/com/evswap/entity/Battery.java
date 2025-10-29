@@ -18,7 +18,7 @@ public class Battery {
     private String status;
     private String detailInformation;
 
-    // ✅ Constructor nhận ID
+    // Constructor nhận ID
     public Battery(Integer id) {
         this.id = id;
     }

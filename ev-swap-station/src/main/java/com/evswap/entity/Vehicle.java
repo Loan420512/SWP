@@ -27,7 +27,7 @@ public class Vehicle {
     private String batteryType;
     private String registerInformation;
 
-    //Constructor nhận ID
+    // Constructor nhận ID
     public Vehicle(Integer id) {
         this.id = id;
     }

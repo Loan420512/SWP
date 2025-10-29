@@ -24,30 +24,32 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                // Stateless + tắt CSRF cho API
+                // REST API không dùng session -> stateless
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 
                 .authorizeHttpRequests(auth -> auth
-                        // Swagger & tài nguyên công khai
+                        // Cho phép Swagger UI và tài nguyên công khai
                         .requestMatchers(
                                 "/", "/error", "/favicon.ico",
                                 "/swagger-ui.html", "/swagger-ui/**", "/v3/api-docs/**"
                         ).permitAll()
 
-                        // ---- Auth endpoints ----
-                        // Cho phép đăng nhập & đăng ký không cần token
+                        // Auth: cho phép đăng nhập / đăng ký không cần token
                         .requestMatchers(HttpMethod.POST, "/api/auth/register", "/api/auth/login").permitAll()
 
-                        // Các endpoint khác trong auth yêu cầu token
+                        // Các endpoint còn lại trong /api/auth/** cần token
                         .requestMatchers("/api/auth/**").authenticated()
 
-                        // ---- Vehicle API ----
-                        // Cho phép Driver/Staff/Admin truy cập
+                        // Vehicle API: Driver / Staff / Admin
                         .requestMatchers("/api/vehicles/**")
                         .hasAnyRole("DRIVER", "STAFF", "ADMIN")
 
-                        // ---- Booking (BR1/BR2) ----
+                        // Battery API: Driver / Staff / Admin
+                        .requestMatchers("/api/batteries/**")
+                        .hasAnyRole("DRIVER", "STAFF", "ADMIN")
+
+                        // Booking API: tạo & hủy booking cho các role này
                         .requestMatchers(HttpMethod.POST, "/api/bookings")
                         .hasAnyRole("DRIVER","STAFF","ADMIN")
                         .requestMatchers(HttpMethod.POST, "/api/bookings/*/cancel")
@@ -56,14 +58,14 @@ public class SecurityConfig {
                         // Cho phép preflight (CORS)
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
-                        // Mọi endpoint khác yêu cầu xác thực
+                        // Mọi request còn lại yêu cầu xác thực
                         .anyRequest().authenticated()
                 )
 
-                // Tắt Basic Auth
+                // Tắt Basic Auth để tránh popup
                 .httpBasic(b -> b.disable())
 
-                // Xử lý lỗi 401 / 403 trả JSON
+                // Trả JSON gọn gàng khi lỗi 401 / 403
                 .exceptionHandling(e -> e
                         .authenticationEntryPoint((req, res, ex) -> {
                             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -77,7 +79,7 @@ public class SecurityConfig {
                         })
                 )
 
-                // Thêm JWT filter
+                // Thêm JWT filter để xác thực token
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -20,7 +20,7 @@ public class Station {
     private String stationStatus;
     private String contact;
 
-    // ✅ Constructor nhận ID
+    // Constructor nhận ID
     public Station(Integer id) {
         this.id = id;
     }
