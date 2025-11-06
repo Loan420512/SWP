@@ -116,12 +116,13 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.markCompleted(id));
     }
 
-    @Operation(summary = "Hiển thị mã QR MoMo để người dùng thanh toán")
+    @Operation(summary = "Sinh mã QR MoMo để người dùng thanh toán")
     @GetMapping("/{id}/momo-qr")
-    public ResponseEntity<String> getMomoQR(@PathVariable Long id) {
-        String qrUrl = bookingService.generateMomoQR(id);
-        return ResponseEntity.ok(qrUrl);
+    public ResponseEntity<MomoQRResponse> getMomoQR(@PathVariable Long id) {
+        MomoQRResponse response = bookingService.generateMomoQR(id);
+        return ResponseEntity.ok(response);
     }
+
 
 }
 

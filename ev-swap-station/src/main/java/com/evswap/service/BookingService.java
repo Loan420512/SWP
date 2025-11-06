@@ -1,6 +1,7 @@
 package com.evswap.service;
 
 import com.evswap.dto.BookingResponse;
+import com.evswap.dto.MomoQRResponse;
 import com.evswap.entity.*;
 import com.evswap.repository.*;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class BookingService {
     private final StationRepository stationRepo;
     private final VehicleRepository vehicleRepo;
     private final BatteryRepository batteryRepo;
+    private final TransactionRepository transactionRepo;
 
     /**
      * Thực hiện BR1 – BOOKED (cọc 20%). Trả về DTO đã “dựng sẵn” dữ liệu để không dính lazy proxy.
@@ -229,11 +231,40 @@ public class BookingService {
     /**
      * Hủy booking với lý do cụ thể.
      */
+//    @Transactional
+//    public BookingResponse cancelBooking(Long id, String reason) {
+//        Booking booking = bookingRepo.findById(id)
+//                .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
+//
+//        if (!"BOOKED".equalsIgnoreCase(booking.getStatus()) &&
+//                !"ARRIVED".equalsIgnoreCase(booking.getStatus())) {
+//            throw new IllegalStateException("Booking cannot be cancelled at this stage");
+//        }
+//
+//        booking.setStatus("CANCELLED");
+//        booking.setCancelReason(reason);
+//        booking.setCanceledAt(LocalDateTime.now());
+//        bookingRepo.save(booking);
+//
+//        // Giải phóng hàng tồn kho nếu còn hold
+//        Inventory inv = inventoryRepo.findByStationIdAndBatteryId(
+//                booking.getStation().getId(),
+//                booking.getBattery().getId()
+//        ).orElse(null);
+//        if (inv != null && nz(inv.getHoldQty()) > 0) {
+//            inv.setHoldQty(Math.max(0, inv.getHoldQty() - 1));
+//            inventoryRepo.save(inv);
+//        }
+//
+//        return toResponse(booking);
+//    }
+
     @Transactional
     public BookingResponse cancelBooking(Long id, String reason) {
         Booking booking = bookingRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
 
+        // Chỉ cho phép hủy khi đang BOOKED hoặc ARRIVED
         if (!"BOOKED".equalsIgnoreCase(booking.getStatus()) &&
                 !"ARRIVED".equalsIgnoreCase(booking.getStatus())) {
             throw new IllegalStateException("Booking cannot be cancelled at this stage");
@@ -244,7 +275,21 @@ public class BookingService {
         booking.setCanceledAt(LocalDateTime.now());
         bookingRepo.save(booking);
 
-        // Giải phóng hàng tồn kho nếu còn hold
+        // 🔹 Cập nhật Transaction nếu có
+        if (booking.getDepositTxnId() != null) {
+            transactionRepo.findById(Long.parseLong(booking.getDepositTxnId())).ifPresent(txn -> {
+                if ("PENDING".equalsIgnoreCase(txn.getStatus()) || "SUCCESS".equalsIgnoreCase(txn.getStatus())) {
+                    txn.setStatus("REFUNDED");
+                    txn.setTransactionType("REFUND");
+                    txn.setRecord("Refund due to booking cancellation"); // ✅ Sửa ở đây
+                    transactionRepo.save(txn);
+                }
+            });
+        }
+
+
+
+        // 🔹 Giải phóng hàng tồn kho
         Inventory inv = inventoryRepo.findByStationIdAndBatteryId(
                 booking.getStation().getId(),
                 booking.getBattery().getId()
@@ -256,6 +301,7 @@ public class BookingService {
 
         return toResponse(booking);
     }
+
 
     /**
      * Đánh dấu khách đã đến trạm.
@@ -289,25 +335,41 @@ public class BookingService {
         return toResponse(booking);
     }
 
+
+
+
+
     @Transactional(readOnly = true)
-    public String generateMomoQR(Long bookingId) {
+    public MomoQRResponse generateMomoQR(Long bookingId) {
         Booking booking = bookingRepo.findById(bookingId)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
 
         BigDecimal amount = booking.getDepositAmount();
-        // SĐT hoặc mã QR cố định của MoMo trạm — bạn có thể cấu hình trong DB hoặc file .env
-        String momoPhone = "0901234567";
-        String message = "Thanh toan coc booking #" + bookingId;
+        String momoPhone = "0856292376";
+        String message = "US" + booking.getUser().getId() + "BK" + bookingId;
 
-        // URL tạo QR tĩnh cho MoMo (MoMo sẽ tự nhận diện cú pháp này)
+
+
+        // Chuỗi QR tĩnh MoMo
         String qrContent = "2|99|" + momoPhone + "||0|" + amount.intValue() + "|Thanh toan coc|" + message;
         String qrEncoded = URLEncoder.encode(qrContent, StandardCharsets.UTF_8);
 
-        // Dùng API hiển thị QR của MoMo hoặc website third-party để render hình ảnh
-        String qrDisplayUrl = "https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=" + qrEncoded;
+        // Tạo ảnh QR
+        String qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + qrEncoded;
 
-        return qrDisplayUrl;
+        // ✅ Trả về đầy đủ thông tin
+        return new MomoQRResponse(qrUrl, momoPhone, amount, message);
     }
+
+
+
+
+
+
+
+
+
+
 
     @Transactional
     public BookingResponse confirmDepositManual(Long bookingId) {
