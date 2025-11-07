@@ -14,6 +14,7 @@ public class RegisterRequest {
     @NotBlank private String phone;
     @NotBlank private String email;
     @NotBlank private String address;
+    private Integer stationId;
 }
 
 
