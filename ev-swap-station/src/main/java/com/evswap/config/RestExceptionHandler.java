@@ -31,4 +31,18 @@ public class RestExceptionHandler {
     public ResponseEntity<?> invalid(ConstraintViolationException ex) {
         return ResponseEntity.badRequest().body(Map.of("error", ex.getMessage()));
     }
+
+    @ExceptionHandler(org.springframework.web.server.ResponseStatusException.class)
+    public ResponseEntity<?> handleResponseStatus(org.springframework.web.server.ResponseStatusException ex) {
+        HttpStatus status = HttpStatus.resolve(ex.getStatusCode().value());
+        String error = (status != null) ? status.getReasonPhrase() : "Error";
+
+        return ResponseEntity.status(ex.getStatusCode())
+                .body(Map.of(
+                        "status", ex.getStatusCode().value(),
+                        "error", error,
+                        "message", ex.getReason()
+                ));
+    }
+
 }
