@@ -77,15 +77,6 @@ public class BookingController {
         );
     }
 
-//    @Operation(summary = "Xác nhận thanh toán đặt cọc",
-//            description = "Được gọi sau khi người dùng thanh toán 20% thành công.")
-//    @PostMapping("/{id}/confirm-deposit")
-//    public ResponseEntity<BookingResponse> confirmDeposit(
-//            @Parameter(description = "ID booking") @PathVariable Long id,
-//            @RequestBody @Valid PaymentConfirmRequest req
-//    ) {
-//        return ResponseEntity.ok(bookingService.confirmDeposit(id, req.getTxnRef()));
-//    }
     @Operation(summary = "Xác nhận thủ công việc thanh toán đặt cọc",
         description = "Dành cho Staff/Admin, sau khi xác minh user đã chuyển tiền vào ví MoMo trạm.")
     @PostMapping("/{id}/confirm-deposit-manual")

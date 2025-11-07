@@ -83,8 +83,6 @@ public class User {
     @Column(name = "status")
     private String status;
 
-    // Quan hệ tới Station – để LAZY.
-    // QUAN TRỌNG: Chặn Jackson serialize để tránh lỗi ByteBuddy proxy
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "StationID")
     @JsonIgnore
