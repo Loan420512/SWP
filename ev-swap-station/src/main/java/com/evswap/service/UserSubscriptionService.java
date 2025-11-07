@@ -28,6 +28,7 @@ public class UserSubscriptionService {
 
     /**
      * 🧾 B1: Khởi tạo thanh toán gói (tạo Transaction PENDING + QR MoMo)
+     * 👉 Không cần chọn trạm khi mua gói
      */
     @Transactional
     public MomoQRResponse generateMomoQR(Integer userId, Integer packageId) {
@@ -71,11 +72,8 @@ public class UserSubscriptionService {
         txn.setTransactionTime(LocalDateTime.now());
         txn.setRecord("Mua gói " + pkg.getPlanName());
 
-        if (user.getStation() != null) {
-            txn.setStation(user.getStation());
-        } else {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Người dùng chưa thuộc trạm nào");
-        }
+        // ❇️ Không yêu cầu Station khi mua
+        txn.setStation(null);
 
         txnRepo.save(txn);
 
@@ -93,10 +91,11 @@ public class UserSubscriptionService {
     }
 
     /**
-     * 🧾 B2: Xác nhận thanh toán thủ công (Admin/Trạm xác nhận đã nhận tiền)
+     * 🧾 B2: Xác nhận thanh toán thủ công (Admin/Staff xác nhận đã nhận tiền)
+     * 👉 Nếu là Staff thì lưu trạm của họ
      */
     @Transactional
-    public Map<String, Object> confirmManualPayment(Long txnId) {
+    public Map<String, Object> confirmManualPayment(Long txnId, Integer staffId) {
 
         Transaction txn = txnRepo.findById(txnId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy giao dịch"));
@@ -105,9 +104,20 @@ public class UserSubscriptionService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Chỉ có thể xác nhận giao dịch đang PENDING");
         }
 
+        // 🔹 Gắn Station của Staff (nếu có)
+        if (staffId != null) {
+            User staff = userRepo.findById(staffId)
+                    .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Không tìm thấy nhân viên xác nhận"));
+            if (staff.getStation() != null) {
+                txn.setStation(staff.getStation());
+            }
+            txn.setRecord("Thanh toán thủ công được xác nhận bởi " + staff.getFullName());
+        } else {
+            txn.setRecord("Thanh toán thủ công được xác nhận bởi Admin hệ thống");
+        }
+
         txn.setStatus("SUCCESS");
         txn.setTransactionRef("MANUAL-" + System.currentTimeMillis());
-        txn.setRecord("Thanh toán thủ công cho gói " + txn.getPackagePlan().getPlanName());
         txnRepo.save(txn);
 
         // 🔹 Tạo UserSubscription tương ứng
@@ -136,7 +146,6 @@ public class UserSubscriptionService {
 
     /**
      * 🕒 B3: Tự động huỷ các giao dịch chưa thanh toán sau 10 phút.
-     * Chạy mỗi 2 phút.
      */
     @Scheduled(fixedRate = 2 * 60 * 1000)
     @Transactional
@@ -175,7 +184,6 @@ public class UserSubscriptionService {
         activeSub.setEndDate(LocalDateTime.now());
         subscriptionRepo.save(activeSub);
 
-        // Cập nhật Transaction nếu có
         Transaction txn = activeSub.getTransaction();
         if (txn != null && "SUCCESS".equalsIgnoreCase(txn.getStatus())) {
             txn.setStatus("REFUNDED");

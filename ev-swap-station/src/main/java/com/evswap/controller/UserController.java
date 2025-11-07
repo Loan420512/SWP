@@ -67,9 +67,12 @@ public class UserController {
 
     // 🧾 B2: Xác nhận thanh toán thủ công
     @PostMapping("/transactions/{txnId}/confirm-manual")
-    public ResponseEntity<Map<String, Object>> confirmManualPayment(@PathVariable Long txnId) {
-        return ResponseEntity.ok(userSubscriptionService.confirmManualPayment(txnId));
+    public ResponseEntity<Map<String, Object>> confirmManualPayment(
+            @PathVariable Long txnId,
+            @RequestParam(required = false) Integer staffId) {
+        return ResponseEntity.ok(userSubscriptionService.confirmManualPayment(txnId, staffId));
     }
+
 
     /**
      * 🧾 B3: Người dùng hủy gói đang hoạt động
