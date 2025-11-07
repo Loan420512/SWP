@@ -14,10 +14,18 @@ public class PackagePlan {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "PackageID")
+    private Integer id;
 
+    @Column(name = "PackageName")
     private String planName;
-    private Double price;
-    private String duration; // "1 month", "6 months", "1 year"
+
+    @Column(name = "Description")
     private String description;
+
+    @Column(name = "Price")
+    private Double price;
+
+    @Column(name = "DurationDays")
+    private Integer durationDays;
 }

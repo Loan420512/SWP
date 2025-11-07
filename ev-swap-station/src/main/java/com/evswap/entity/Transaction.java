@@ -35,7 +35,7 @@ public class Transaction {
     @Column(name="Status")    private String status; // PENDING/SUCCESS/FAILED
     @Column(name="TransactionType") private String transactionType; // DEPOSIT/SWAP/REFUND/SUBSCRIPTION
 
-    private String transactionRef; // Mã giao dịch từ cổng thanh toán (VD: VNPAY, Momo)
+    private String transactionRef; // Mã giao dịch
 
     @Column(name = "Record")
     private String record;

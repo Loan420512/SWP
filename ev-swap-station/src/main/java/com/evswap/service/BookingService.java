@@ -15,6 +15,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.net.URLEncoder;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -28,9 +29,10 @@ public class BookingService {
     private final VehicleRepository vehicleRepo;
     private final BatteryRepository batteryRepo;
     private final TransactionRepository transactionRepo;
+    private final UserSubscriptionRepository subscriptionRepo; // ✅ thêm repo để lấy gói người dùng
 
     /**
-     * Thực hiện BR1 – BOOKED (cọc 20%). Trả về DTO đã “dựng sẵn” dữ liệu để không dính lazy proxy.
+     * BR1 – BOOKED (Cọc 20%) có áp dụng giảm giá theo gói VIP/VIP PRO.
      */
     @Transactional
     public BookingResponse bookWithPassiveDeposit(Integer userId,
@@ -38,10 +40,10 @@ public class BookingService {
                                                   Integer vehicleId,
                                                   Integer batteryId,
                                                   OffsetDateTime timeSlotOffset,
-                                                  BigDecimal estimatedPrice,   // có thể null/<=0
+                                                  BigDecimal estimatedPrice,
                                                   int holdMinutes) {
 
-        // ---- validate inputs ----
+        // ====== 1️⃣ Validate ======
         if (timeSlotOffset == null)
             throw new IllegalArgumentException("timeSlot required");
 
@@ -51,7 +53,7 @@ public class BookingService {
 
         if (holdMinutes <= 0) holdMinutes = 30;
 
-        // ---- load basic entities ----
+        // ====== 2️⃣ Load entity cơ bản ======
         User user = userRepo.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         if (!"Active".equalsIgnoreCase(nz(user.getStatus())))
@@ -59,7 +61,6 @@ public class BookingService {
 
         Station station = stationRepo.findById(stationId)
                 .orElseThrow(() -> new IllegalArgumentException("Station not found"));
-        // DB đang dùng CHECK (Open/Closed), nên coi "Open" là active
         if (!"Open".equalsIgnoreCase(nz(station.getStationStatus())))
             throw new IllegalStateException("Station is not active");
 
@@ -72,24 +73,20 @@ public class BookingService {
         Battery battery = batteryRepo.findById(batteryId)
                 .orElseThrow(() -> new IllegalArgumentException("Battery not found"));
 
-        // Trạng thái pin hợp lệ cho kinh doanh (theo CHECK hiện tại: Full/Empty/Maintenance/Damaged)
         if (!"Full".equalsIgnoreCase(nz(battery.getStatus())))
             throw new IllegalStateException("Battery is not sellable (must be Full)");
 
-        // ---- tính giá nếu client bỏ trống/<=0 ----
-        BigDecimal batteryPrice = toBig(battery.getPrice()); // battery.getPrice() có thể là Double trong entity
+        // ====== 3️⃣ Tính giá cơ bản ======
+        BigDecimal basePrice = toBig(battery.getPrice());
         if (estimatedPrice == null || estimatedPrice.compareTo(BigDecimal.ZERO) <= 0) {
-            if (batteryPrice == null || batteryPrice.compareTo(BigDecimal.ZERO) <= 0) {
-                throw new IllegalStateException("Price for this battery is not configured");
-            }
-            estimatedPrice = batteryPrice;
+            estimatedPrice = basePrice;
         }
 
-        // ---- chặn trùng lịch gần nhau ----
+        // ====== 4️⃣ Kiểm tra trùng lịch ======
         long overlap = bookingRepo.countOpenAround(userId, timeSlot, 30);
         if (overlap > 0) throw new IllegalStateException("You already have a booking around that time");
 
-        // ---- giữ (hold) hàng tồn kho ----
+        // ====== 5️⃣ Giữ hàng tồn kho ======
         Inventory inv = inventoryRepo.lockForUpdate(stationId, batteryId)
                 .orElseThrow(() -> new IllegalStateException("Inventory not found"));
         int available = nz(inv.getReadyQty()) - nz(inv.getHoldQty());
@@ -97,17 +94,35 @@ public class BookingService {
         inv.setHoldQty(nz(inv.getHoldQty()) + 1);
         inventoryRepo.save(inv);
 
-        // ---- tạo booking + giao dịch cọc 20% ----
-        BigDecimal deposit = estimatedPrice.multiply(new BigDecimal("0.20"))
+        // ====== 6️⃣ Lấy gói VIP đang active (nếu có) ======
+        Optional<UserSubscription> activeSubOpt = subscriptionRepo
+                .findFirstByUserIdAndStatusOrderByEndDateDesc(userId, "ACTIVE");
+
+        BigDecimal discountPercent = BigDecimal.ZERO;
+        String packageName = "Normal";
+
+        if (activeSubOpt.isPresent()) {
+            PackagePlan pkg = activeSubOpt.get().getPackagePlan();
+            packageName = pkg.getPlanName();
+            discountPercent = getDiscountPercent(pkg);
+        }
+
+        // ====== 7️⃣ Áp dụng giảm giá & tính cọc ======
+        BigDecimal discountedPrice = estimatedPrice.multiply(BigDecimal.ONE.subtract(discountPercent))
                 .setScale(0, RoundingMode.HALF_UP);
 
+        // 🧮 Mọi loại gói đều phải cọc 20% (trên giá đã giảm)
+        BigDecimal deposit = discountedPrice.multiply(new BigDecimal("0.20"))
+                .setScale(0, RoundingMode.HALF_UP);
+
+        // ====== 8️⃣ Lưu booking ======
         Booking booking = Booking.builder()
                 .user(User.builder().id(userId).build())
                 .station(Station.builder().id(stationId).build())
                 .vehicle(vehicleId != null ? Vehicle.builder().id(vehicleId).build() : null)
                 .battery(Battery.builder().id(batteryId).build())
                 .timeDate(timeSlot)
-                .estimatedPrice(estimatedPrice)
+                .estimatedPrice(discountedPrice)
                 .depositAmount(deposit)
                 .depositStatus("PENDING")
                 .status("BOOKED")
@@ -115,6 +130,7 @@ public class BookingService {
                 .build();
         booking = bookingRepo.save(booking);
 
+        // ====== 9️⃣ Tạo Transaction ======
         Transaction tx = Transaction.builder()
                 .user(User.builder().id(userId).build())
                 .station(Station.builder().id(stationId).build())
@@ -123,78 +139,45 @@ public class BookingService {
                 .transactionType("DEPOSIT")
                 .status("PENDING")
                 .transactionTime(LocalDateTime.now())
+                .record(String.format("Deposit 20%% for booking (%s - %.0f%% discount)",
+                        packageName, discountPercent.multiply(BigDecimal.valueOf(100))))
                 .build();
         txnRepo.save(tx);
 
-        // ---- dựng DTO trả về (đủ thông tin, không lazy) ----
-        return BookingResponse.builder()
-                .id(booking.getId())
-                .user(BookingResponse.UserInfo.builder()
-                        .id(user.getId())
-                        .fullName(user.getFullName())
-                        .phone(user.getPhone())
-                        .email(user.getEmail())
-                        .build())
-                .station(BookingResponse.StationInfo.builder()
-                        .id(station.getId())
-                        .name(station.getStationName())
-                        .address(station.getAddress())
-                        .status(station.getStationStatus())
-                        .build())
-                .vehicle(vehicle == null ? null :
-                        BookingResponse.VehicleInfo.builder()
-                                .id(vehicle.getId())
-                                .vin(vehicle.getVin())
-                                .model(vehicle.getVehicleModel())
-                                .batteryType(vehicle.getBatteryType())
-                                .build())
-                .battery(BookingResponse.BatteryInfo.builder()
-                        .id(battery.getId())
-                        .name(battery.getBatteryName())
-                        .price(batteryPrice)            // CHÚ Ý: BigDecimal
-                        .status(battery.getStatus())
-                        .build())
-                .timeDate(booking.getTimeDate())
-                .estimatedPrice(booking.getEstimatedPrice())
-                .depositAmount(booking.getDepositAmount())
-                .depositStatus(booking.getDepositStatus())
-                .status(booking.getStatus())
-                .holdUntil(booking.getHoldUntil())
-                .cancelReason(booking.getCancelReason())
-                .canceledAt(booking.getCanceledAt())
-                .build();
+        // ====== 🔟 Trả về DTO ======
+        return toResponse(booking);
     }
 
-    // -------- helpers ----------
+    // ==================== 🔹 Helper: lấy % giảm theo tên gói ====================
+    private BigDecimal getDiscountPercent(PackagePlan pkg) {
+        if (pkg == null || pkg.getPlanName() == null) return BigDecimal.ZERO;
+        String name = pkg.getPlanName().toLowerCase();
+        if (name.contains("vip pro yearly")) return BigDecimal.valueOf(0.30);
+        if (name.contains("vip pro monthly")) return BigDecimal.valueOf(0.20);
+        if (name.contains("vip yearly")) return BigDecimal.valueOf(0.15);
+        if (name.contains("vip monthly")) return BigDecimal.valueOf(0.10);
+        return BigDecimal.ZERO;
+    }
+
+    // ==================== 🔹 Common helpers ====================
     private static int nz(Integer v) { return v == null ? 0 : v; }
-
     private static String nz(String s) { return s == null ? "" : s; }
+    private static BigDecimal toBig(Double d) { return d == null ? BigDecimal.ZERO : BigDecimal.valueOf(d); }
 
-    /**
-     * Chuyển Double (từ entity cũ) sang BigDecimal an toàn. Nếu null → null.
-     */
-    private static BigDecimal toBig(Double d) {
-        return d == null ? null : BigDecimal.valueOf(d);
-    }
+    // ==================== 🔹 Các hàm giữ nguyên ====================
 
-    /**
-     * Xác nhận thanh toán đặt cọc thành công.
-     */
     @Transactional
     public BookingResponse confirmDeposit(Long id, String txnRef) {
         Booking booking = bookingRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
-
         if (!"BOOKED".equalsIgnoreCase(booking.getStatus()))
             throw new IllegalStateException("Booking not eligible for deposit confirmation");
 
         booking.setDepositStatus("PAID");
         bookingRepo.save(booking);
 
-        // Cập nhật Transaction tương ứng
         Transaction tx = txnRepo.findFirstByBookingIdAndTransactionTypeOrderByTransactionTimeDesc(
-                booking.getId(), "DEPOSIT"
-        ).orElse(null);
+                booking.getId(), "DEPOSIT").orElse(null);
         if (tx != null) {
             tx.setStatus("SUCCESS");
             tx.setTransactionRef(txnRef);
@@ -204,14 +187,10 @@ public class BookingService {
         return toResponse(booking);
     }
 
-    /**
-     * Tự động hủy booking quá hạn (chưa đến trạm, quá holdUntil).
-     * Chạy mỗi 5 phút.
-     */
     @Scheduled(fixedRate = 5 * 60 * 1000)
     @Transactional
     public void autoCancelExpiredBookings() {
-        var expired = bookingRepo.findAllByStatusAndHoldUntilBefore("BOOKED", LocalDateTime.now());
+        var expired = bookingRepo.findAllByStatusAndHoldUntilBefore("BOOKED", LocalDateTime.now().minusMinutes(10));
         for (Booking b : expired) {
             b.setStatus("CANCELLED");
             b.setCancelReason("Auto-cancelled due to timeout");
@@ -219,8 +198,7 @@ public class BookingService {
             bookingRepo.save(b);
 
             Inventory inv = inventoryRepo.findByStationIdAndBatteryId(
-                    b.getStation().getId(), b.getBattery().getId()
-            ).orElse(null);
+                    b.getStation().getId(), b.getBattery().getId()).orElse(null);
             if (inv != null && nz(inv.getHoldQty()) > 0) {
                 inv.setHoldQty(inv.getHoldQty() - 1);
                 inventoryRepo.save(inv);
@@ -228,43 +206,11 @@ public class BookingService {
         }
     }
 
-    /**
-     * Hủy booking với lý do cụ thể.
-     */
-//    @Transactional
-//    public BookingResponse cancelBooking(Long id, String reason) {
-//        Booking booking = bookingRepo.findById(id)
-//                .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
-//
-//        if (!"BOOKED".equalsIgnoreCase(booking.getStatus()) &&
-//                !"ARRIVED".equalsIgnoreCase(booking.getStatus())) {
-//            throw new IllegalStateException("Booking cannot be cancelled at this stage");
-//        }
-//
-//        booking.setStatus("CANCELLED");
-//        booking.setCancelReason(reason);
-//        booking.setCanceledAt(LocalDateTime.now());
-//        bookingRepo.save(booking);
-//
-//        // Giải phóng hàng tồn kho nếu còn hold
-//        Inventory inv = inventoryRepo.findByStationIdAndBatteryId(
-//                booking.getStation().getId(),
-//                booking.getBattery().getId()
-//        ).orElse(null);
-//        if (inv != null && nz(inv.getHoldQty()) > 0) {
-//            inv.setHoldQty(Math.max(0, inv.getHoldQty() - 1));
-//            inventoryRepo.save(inv);
-//        }
-//
-//        return toResponse(booking);
-//    }
-
     @Transactional
     public BookingResponse cancelBooking(Long id, String reason) {
         Booking booking = bookingRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
 
-        // Chỉ cho phép hủy khi đang BOOKED hoặc ARRIVED
         if (!"BOOKED".equalsIgnoreCase(booking.getStatus()) &&
                 !"ARRIVED".equalsIgnoreCase(booking.getStatus())) {
             throw new IllegalStateException("Booking cannot be cancelled at this stage");
@@ -281,19 +227,15 @@ public class BookingService {
                 if ("PENDING".equalsIgnoreCase(txn.getStatus()) || "SUCCESS".equalsIgnoreCase(txn.getStatus())) {
                     txn.setStatus("REFUNDED");
                     txn.setTransactionType("REFUND");
-                    txn.setRecord("Refund due to booking cancellation"); // ✅ Sửa ở đây
+                    txn.setRecord("Refund due to booking cancellation");
                     transactionRepo.save(txn);
                 }
             });
         }
 
-
-
         // 🔹 Giải phóng hàng tồn kho
         Inventory inv = inventoryRepo.findByStationIdAndBatteryId(
-                booking.getStation().getId(),
-                booking.getBattery().getId()
-        ).orElse(null);
+                booking.getStation().getId(), booking.getBattery().getId()).orElse(null);
         if (inv != null && nz(inv.getHoldQty()) > 0) {
             inv.setHoldQty(Math.max(0, inv.getHoldQty() - 1));
             inventoryRepo.save(inv);
@@ -302,15 +244,10 @@ public class BookingService {
         return toResponse(booking);
     }
 
-
-    /**
-     * Đánh dấu khách đã đến trạm.
-     */
     @Transactional
     public BookingResponse markArrived(Long id) {
         Booking booking = bookingRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
-
         if (!"BOOKED".equalsIgnoreCase(booking.getStatus()))
             throw new IllegalStateException("Only booked bookings can be marked as arrived");
 
@@ -319,14 +256,10 @@ public class BookingService {
         return toResponse(booking);
     }
 
-    /**
-     * Hoàn tất booking sau khi đổi pin thành công.
-     */
     @Transactional
     public BookingResponse markCompleted(Long id) {
         Booking booking = bookingRepo.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
-
         if (!"ARRIVED".equalsIgnoreCase(booking.getStatus()))
             throw new IllegalStateException("Only arrived bookings can be completed");
 
@@ -335,90 +268,50 @@ public class BookingService {
         return toResponse(booking);
     }
 
-
-
-
-
     @Transactional(readOnly = true)
     public MomoQRResponse generateMomoQR(Long bookingId) {
         Booking booking = bookingRepo.findById(bookingId)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
-
         BigDecimal amount = booking.getDepositAmount();
         String momoPhone = "0856292376";
         String message = "US" + booking.getUser().getId() + "BK" + bookingId;
 
-
-
-        // Chuỗi QR tĩnh MoMo
         String qrContent = "2|99|" + momoPhone + "||0|" + amount.intValue() + "|Thanh toan coc|" + message;
         String qrEncoded = URLEncoder.encode(qrContent, StandardCharsets.UTF_8);
-
-        // Tạo ảnh QR
         String qrUrl = "https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=" + qrEncoded;
 
-        // ✅ Trả về đầy đủ thông tin
         return new MomoQRResponse(qrUrl, momoPhone, amount, message);
     }
-
-
-
-
-
-
-
-
-
-
 
     @Transactional
     public BookingResponse confirmDepositManual(Long bookingId) {
         Booking booking = bookingRepo.findById(bookingId)
                 .orElseThrow(() -> new IllegalArgumentException("Booking not found"));
-
-        if (!"BOOKED".equalsIgnoreCase(booking.getStatus())) {
+        if (!"BOOKED".equalsIgnoreCase(booking.getStatus()))
             throw new IllegalStateException("Booking must be BOOKED to confirm deposit");
-        }
 
         booking.setDepositStatus("PAID");
         bookingRepo.save(booking);
 
-        // Cập nhật transaction
         Transaction tx = txnRepo.findFirstByBookingIdAndTransactionTypeOrderByTransactionTimeDesc(
-                bookingId, "DEPOSIT"
-        ).orElse(null);
+                bookingId, "DEPOSIT").orElse(null);
         if (tx != null) {
             tx.setStatus("SUCCESS");
             tx.setTransactionRef("MANUAL-" + System.currentTimeMillis());
             txnRepo.save(tx);
         }
-
         return toResponse(booking);
     }
 
-
-
-    // ==================== Helpers ====================
-
+    // ==================== 🔹 DTO builder ====================
     private BookingResponse toResponse(Booking booking) {
-        // --- load đầy đủ entity để tránh lazy null ---
-        User user = booking.getUser() != null
-                ? userRepo.findById(booking.getUser().getId()).orElse(null)
-                : null;
-
-        Station station = booking.getStation() != null
-                ? stationRepo.findById(booking.getStation().getId()).orElse(null)
-                : null;
-
+        User user = userRepo.findById(booking.getUser().getId()).orElse(null);
+        Station station = stationRepo.findById(booking.getStation().getId()).orElse(null);
         Vehicle vehicle = booking.getVehicle() != null
                 ? vehicleRepo.findById(booking.getVehicle().getId()).orElse(null)
                 : null;
+        Battery battery = batteryRepo.findById(booking.getBattery().getId()).orElse(null);
 
-        Battery battery = booking.getBattery() != null
-                ? batteryRepo.findById(booking.getBattery().getId()).orElse(null)
-                : null;
-
-        // --- build DTO trả về ---
         return BookingResponse.builder()
                 .id(booking.getId())
                 .user(user == null ? null : BookingResponse.UserInfo.builder()
@@ -457,6 +350,4 @@ public class BookingService {
                 .canceledAt(booking.getCanceledAt())
                 .build();
     }
-
-
 }
